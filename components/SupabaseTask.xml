@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="SupabaseTask" extends="Task">
+    <script type="text/brightscript" uri="pkg:/source/supabase_config.brs" />
+    <script type="text/brightscript" uri="pkg:/components/SupabaseTask.brs" />
+
+    <interface>
+        <!-- Input fields -->
+        <field id="requestType" type="string" />
+        <field id="endpoint" type="string" />
+        <field id="queryFilter" type="string" />
+        <field id="postBody" type="string" />
+        <field id="propertyId" type="string" />
+        <field id="pin" type="string" />
+        <field id="companyPin" type="string" />
+        <field id="deviceId" type="string" />
+        <field id="deviceToken" type="string" />
+        <field id="staffToken" type="string" />
+
+        <!-- Output fields -->
+        <field id="responseJson" type="assocarray" />
+        <field id="responseArray" type="array" />
+        <field id="responseSuccess" type="boolean" value="false" />
+        <field id="errorMessage" type="string" value="" />
+    </interface>
+</component>
+

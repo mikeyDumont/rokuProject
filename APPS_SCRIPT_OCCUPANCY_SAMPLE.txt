@@ -1,0 +1,93 @@
+var arrivalsUrl = "https://brokenbowvacationcabins.trackhs.com/api/pms/reservations?sortColumn=checkin&sortDirection=asc&arrivalStart="+date+"&arrivalEnd="+date+"&scroll=1&status=confirmed&size=100";
+  var arrivalResponse = UrlFetchApp.fetch(arrivalsUrl, options);
+var arrivalData = JSON.parse(arrivalResponse.getContentText());
+var arrivals = arrivalData._embedded.reservations;
+var arrivalCount = arrivals.length;
+
+for (x = 0; x < arrivals.length; x++) {
+  //console.log(arrivals[x].nights);
+  var feesUrl = "https://brokenbowvacationcabins.trackhs.com/api/pms/reservations/"+arrivals[x].id+"/fees";
+  var feesResponse = UrlFetchApp.fetch(feesUrl, options);
+  var feesData = JSON.parse(feesResponse.getContentText());
+  var fees = feesData._embedded.fees;
+  if (units.flat().find(u => u.id === arrivals[x].unitId)) {
+    units.flat().find(u => u.id === arrivals[x].unitId).isArrival = "Arrival";
+    units.flat().find(u => u.id === arrivals[x].unitId).maintPrep = "Maintenance";
+    units.flat().find(u => u.id === arrivals[x].unitId).resId = arrivals[x].id;
+  }
+  for(i = 0; i < fees.length; i++) {
+      if (woodIds.includes(fees[i].chargeId)) {
+        if (fees[i].chargeId != 34) {
+          units.flat().find(r => r.resId === arrivals[x].id).wood = fees[i].chargeInline.name.match(/[0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/g)[0];
+        } else {
+          units.flat().find(r => r.resId === arrivals[x].id).wood = parseInt(fees[i].quantity) + " Bundle";
+        }
+        
+      } else if (fees[i].chargeId === os) {
+        units.flat().find(r => r.resId === arrivals[x].id).hkPrep = "HK";
+        units.flat().find(r => r.resId === arrivals[x].id).os = "OS";
+      } else if (fees[i].chargeId === romance) {
+        units.flat().find(r => r.resId === arrivals[x].id).hkPrep = "HK";
+        units.flat().find(r => r.resId === arrivals[x].id).romance = "❤️";
+      } 
+    }
+  
+}
+
+var outsUrl = "https://brokenbowvacationcabins.trackhs.com/api/pms/reservations?sortColumn=name&sortDirection=asc&departureStart="+date+"&departureEnd="+date+"&scroll=1&status=Checked%20In&size=100";
+var outResponse = UrlFetchApp.fetch(outsUrl, options);
+var outsData = JSON.parse(outResponse.getContentText());
+var outs = outsData._embedded.reservations;
+for (x = 0; x < outs.length; x++) {
+  //console.log(outs[x]._embedded.unit.name);
+  if (units.flat().find(u => u.id === outs[x].unitId)) {
+    units.flat().find(u => u.id === outs[x].unitId).hkPrep = "HK";
+    units.flat().find(u => u.id === outs[x].unitId).isCheckout = "Checkout";
+  }
+}
+var occupiedUrl = "https://brokenbowvacationcabins.trackhs.com/api/pms/reservations?sortColumn=name&sortDirection=asc&scroll=1&inHouseToday=1&status=Checked%20In&size=100";
+var occupiedResponse = UrlFetchApp.fetch(occupiedUrl, options);
+var occupiedData = JSON.parse(occupiedResponse.getContentText());
+var occupieds = occupiedData._embedded.reservations;
+for (x = 0; x < occupieds.length; x++) {
+  //console.log(occupieds[x]._embedded.unit.name);
+  if (units.flat().find(u => u.id === occupieds[x].unitId)) {
+    units.flat().find(u => u.id === occupieds[x].unitId).isOccupied = "Occupied";
+  }
+
+}
+units.sort((x, y) => x.order - y.order);
+
+
+units.forEach(function(v, i) {
+  
+    detail.getRange(i+2, 1).setValue(v.order);
+    detail.getRange(i+2, 2).setValue(v.name);
+    detail.getRange(i+2, 3).setValue(v.id);
+    detail.getRange(i+2, 4).setValue(v.code);
+    detail.getRange(i+2, 19).setValue(v.pets);
+    detail.getRange(i+2, 20).setValue(v.coord);
+    detail.getRange(i+2, 16).setValue(v.hvac);
+    detail.getRange(i+2, 17).setValue(v.pci);
+    if (v.cleanStatus == 2 && v.resId !== undefined) {
+      //console.log(v.resId);
+      detail.getRange(i+2, 6).setValue("TURN");
+    } else if (v.resId !== undefined && v.cleanStatus != 2) {
+      detail.getRange(i+2, 6).setValue("IN");
+    }  else if (v.isCheckout) {
+      detail.getRange(i+2, 6).setValue("OUT");
+    } else if (v.isOccupied === false && v.cleanStatus === "dirty") {
+      detail.getRange(i+2, 6).setValue("Empty");
+    } else if (v.isOccupied) {
+      detail.getRange(i+2, 5).setValue("TRUE");
+      detail.getRange(i+2, 6).setValue("OCCUPIED");
+    } else {
+      detail.getRange(i+2, 6).setValue("Vacant");
+    }
+    detail.getRange(i+2, 8).setValue(v.os);
+    detail.getRange(i+2, 7).setValue(v.cleanStatus);
+    detail.getRange(i+2, 9).setValue(v.wood);
+    detail.getRange(i+2, 10).setValue(v.romance);
+    detail.getRange(i+2, 11).setValue(v.resId);
+    detail.getRange(i+2, 23).setValue(v.bedrooms);
+})

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Broken Bow Vacation Cabins (Cabin Concierge TV)</title>
+    <style>
+        :root {
+            --bg-color: #0c1410;
+            --card-bg: #14201a;
+            --text-color: #e2e8f0;
+            --heading-color: #ffffff;
+            --accent-color: #4ade80;
+            --muted-color: #94a3b8;
+            --border-color: #22352b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            border: 1px solid var(--border-color);
+        }
+
+        header {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: var(--heading-color);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--accent-color);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .last-updated {
+            color: var(--muted-color);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        h2 {
+            color: var(--heading-color);
+            font-size: 1.35rem;
+            margin-top: 1.8rem;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid var(--accent-color);
+            padding-left: 0.6rem;
+        }
+
+        h3 {
+            color: var(--heading-color);
+            font-size: 1.1rem;
+            margin-top: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p, ul {
+            margin-bottom: 1rem;
+        }
+
+        ul {
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        li strong {
+            color: var(--heading-color);
+        }
+
+        .badge {
+            display: inline-block;
+            background-color: rgba(74, 222, 128, 0.15);
+            color: var(--accent-color);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--muted-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <span class="badge">Roku Channel Privacy Disclosure</span>
+            <h1>Privacy Policy</h1>
+            <p class="subtitle">Broken Bow Vacation Cabins – Cabin Concierge TV</p>
+            <p class="last-updated">Last Updated: September 6, 2026</p>
+        </header>
+
+        <section>
+            <h2>1. Overview & Purpose</h2>
+            <p>This Privacy Policy describes how the <strong>Broken Bow Vacation Cabins</strong> Roku Channel ("Cabin Concierge TV", "the Channel", "we", "us", or "our") processes, displays, and protects information when used on Roku devices installed at our rental properties.</p>
+        </section>
+
+        <section>
+            <h2>2. Information Processed & Displayed</h2>
+            
+            <h3>A. Property & Stay Display Data</h3>
+            <p>The Channel processes and displays property management and stay information, including:</p>
+            <ul>
+                <li><strong>Guest Names & Stay Dates:</strong> Personalized welcome greetings displaying guest names (e.g., first and last name) and stay window (check-in and check-out dates) during active reservation periods.</li>
+                <li><strong>Stay Status & Unit Information:</strong> Unit configuration, active reservation status, and property-specific information.</li>
+                <li><strong>House Rules & Checkout Checklists:</strong> Property rules, instructions, and interactive departure checklists.</li>
+                <li><strong>Guest Feedback & Ratings:</strong> Star ratings and optional feedback comments submitted directly through the Roku interface by guests.</li>
+            </ul>
+
+            <h3>B. Technical & Device Information</h3>
+            <ul>
+                <li><strong>Roku Device Identification:</strong> Server-issued device credentials and anonymous identifiers required for securely binding the channel instance to a specific property location.</li>
+                <li><strong>Network Transmission Data:</strong> Standard HTTP request headers and IP addresses required for network communications.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>3. Third-Party Services & API Integrations</h2>
+            <p>To deliver its core features, the Channel communicates with trusted third-party service providers via secure HTTPS API connections:</p>
+
+            <h3>A. Supabase (Backend & Database Service)</h3>
+            <ul>
+                <li><strong>Purpose:</strong> Secure database storage, authentication, and API endpoints.</li>
+                <li><strong>Data Shared/Retrieved:</strong> Property details, active reservation metadata (guest names and stay dates), house rules, local recommendations, and guest feedback submissions.</li>
+                <li><strong>Data Protection:</strong> Database Row-Level Security (RLS) policies enforce strict access controls. Guest names and stay dates are accessible strictly during the active reservation stay window (<code>check_in_at &lt;= NOW() &lt; check_out_out</code>) and are automatically hidden during turnover periods.</li>
+            </ul>
+
+            <h3>B. OpenWeather (Weather Information Service)</h3>
+            <ul>
+                <li><strong>Purpose:</strong> Providing real-time weather conditions and multi-day forecasts for the property location (Broken Bow / Hochatown area).</li>
+                <li><strong>Data Shared/Retrieved:</strong> Geographic coordinates or location query parameter sent to fetch weather data.</li>
+                <li><strong>Security:</strong> API requests are routed through a secure backend proxy (Supabase Edge Function). No personally identifiable information or guest data is ever transmitted to OpenWeather.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>4. How We Use Information</h2>
+            <p>Information processed by the Channel is used exclusively to:</p>
+            <ul>
+                <li>Provide guests with customized on-screen welcome information and stay details during their visit.</li>
+                <li>Display relevant local weather forecasts and area recommendations.</li>
+                <li>Assist guests with house rules, hot tub instructions, and departure checklists.</li>
+                <li>Process guest ratings and feedback to improve property amenities and host services.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>5. Data Security & Storage</h2>
+            <p>We implement robust administrative, technical, and physical security measures to protect data:</p>
+            <ul>
+                <li><strong>Encrypted Transmission:</strong> All network traffic between the Roku channel, Supabase backend, and APIs uses industry-standard TLS/SSL (HTTPS) encryption.</li>
+                <li><strong>Time-Restricted Display:</strong> Guest names and dates are only loaded and displayed during active reservation windows.</li>
+                <li><strong>Credential Protection:</strong> API keys and sensitive credentials are held in secure environment secrets on the backend and are never exposed in client packages.</li>
+                <li><strong>Device Authorization:</strong> Each installed channel instance uses server-authenticated device security to prevent unauthorized access to guest display data.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>6. Children's Privacy</h2>
+            <p>The Channel does not knowingly collect or target personal information from children under the age of 13. The application operates solely as an ambient display and informational utility within private vacation rental cabins.</p>
+        </section>
+
+        <section>
+            <h2>7. Changes to This Privacy Policy</h2>
+            <p>We may update this Privacy Policy from time to time to reflect updates to the Channel or regulatory requirements. Any modifications will be effective immediately upon posting the updated policy.</p>
+        </section>
+
+        <section>
+            <h2>8. Contact Us</h2>
+            <p>If you have any questions or concerns regarding this Privacy Policy or data handling in the Broken Bow Vacation Cabins Roku Channel, please contact property management:</p>
+            <ul>
+                <li><strong>Email:</strong> support@brokenbowvacationcabins.com</li>
+                <li><strong>Website:</strong> <a href="https://brokenbowvacationcabins.com" target="_blank" rel="noopener noreferrer">brokenbowvacationcabins.com</a></li>
+            </ul>
+        </section>
+
+        <footer>
+            <p>&copy; 2026 Broken Bow Vacation Cabins. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>
+

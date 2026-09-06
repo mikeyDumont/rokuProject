@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="PinGateScreen" extends="Group" xsi:noNamespaceSchemaLocation="http://sdkdocs.roku.com/schema/RokuSceneGraph.xsd">
+  <script type="text/brightscript" uri="pkg:/components/PinGateScreen.brs" />
+  <script type="text/brightscript" uri="pkg:/source/api.brs" />
+  <script type="text/brightscript" uri="pkg:/source/supabase_config.brs" />
+
+  <interface>
+    <field id="isUnlocked" type="boolean" value="false" alwaysNotify="true" />
+    <field id="unlockedProperty" type="assocarray" alwaysNotify="true" />
+    <field id="currentPin" type="string" value="" />
+    <field id="previousPropertyName" type="string" value="" />
+    <field id="reassignMode" type="boolean" value="false" alwaysNotify="true" onChange="onReassignModeChanged" />
+    <field id="showGate" type="boolean" value="false" alwaysNotify="true" onChange="onShowGateChanged" />
+    <function name="resetPin" />
+  </interface>
+
+  <children>
+    <Rectangle id="bgCanvas" width="1920" height="1080" color="0x060D0AFF" visible="false" />
+    <Rectangle translation="[100, 36]" width="1720" height="3" color="0x10B981FF" visible="false" />
+
+    <Group id="headerGroup" translation="[100, 52]" visible="false">
+      <Label id="portalTitle" text="HOCHATOWN CABIN CONCIERGE &amp; GUEST PORTAL" font="font:MediumBoldSystemFont" color="0x34D399FF" width="1720" />
+      <Label id="portalSubtitle" translation="[0, 36]" text="Enter your 4-digit Property PIN to access Wi-Fi, rules, local guides &amp; check-out" font="font:SmallSystemFont" color="0x94A3B8FF" width="1720" />
+    </Group>
+
+    <!-- LEFT CARD: Keypad & PIN Boxes -->
+    <Group id="keypadCard" translation="[100, 140]" visible="false">
+      <Rectangle width="820" height="800" color="0x0D1A14EE" />
+      <Rectangle width="820" height="4" color="0x10B981FF" />
+
+      <Label text="ENTER 4-DIGIT PROPERTY PIN" translation="[40, 24]" font="font:SmallestBoldSystemFont" color="0x34D399FF" width="740" />
+
+      <Group id="pinBoxesGroup" translation="[40, 60]">
+        <Group id="boxGroup1" translation="[110, 0]">
+          <Rectangle id="pinBox1" width="110" height="84" color="0x162A20FF" />
+          <Label id="pinText1" text="" font="font:LargeBoldSystemFont" color="0x34D399FF" horizAlign="center" vertAlign="center" width="110" height="84" />
+        </Group>
+        <Group id="boxGroup2" translation="[240, 0]">
+          <Rectangle id="pinBox2" width="110" height="84" color="0x162A20FF" />
+          <Label id="pinText2" text="" font="font:LargeBoldSystemFont" color="0x34D399FF" horizAlign="center" vertAlign="center" width="110" height="84" />
+        </Group>
+        <Group id="boxGroup3" translation="[370, 0]">
+          <Rectangle id="pinBox3" width="110" height="84" color="0x162A20FF" />
+          <Label id="pinText3" text="" font="font:LargeBoldSystemFont" color="0x34D399FF" horizAlign="center" vertAlign="center" width="110" height="84" />
+        </Group>
+        <Group id="boxGroup4" translation="[500, 0]">
+          <Rectangle id="pinBox4" width="110" height="84" color="0x162A20FF" />
+          <Label id="pinText4" text="" font="font:LargeBoldSystemFont" color="0x34D399FF" horizAlign="center" vertAlign="center" width="110" height="84" />
+        </Group>
+      </Group>
+
+      <Label id="statusLabel" translation="[40, 160]" text="Use D-Pad to navigate keypad, or press numbers on remote" font="font:SmallSystemFont" color="0x88DDBBFF" horizAlign="center" width="740" />
+
+      <Group id="keypadGrid" translation="[40, 200]">
+        <!-- ROW 0: 1, 2, 3 -->
+        <Group id="key_0_0" translation="[20, 0]">
+          <Rectangle id="bg_0_0" width="220" height="96" color="0x182C22FF" />
+          <Label id="lbl_0_0" text="1" font="font:LargeBoldSystemFont" color="0xFFFFFFFF" horizAlign="center" vertAlign="center" width="220" height="96" />
+        </Group>
+        <Group id="key_0_1" translation="[260, 0]">
+          <Rectangle id="bg_0_1" width="220" height="96" color="0x182C22FF" />
+          <Label id="lbl_0_1" text="2" font="font:LargeBoldSystemFont" color="0xFFFFFFFF" horizAlign="center" vertAlign="center" width="220" height="96" />
+        </Group>
+        <Group id="key_0_2" translation="[500, 0]">
+          <Rectangle id="bg_0_2" width="220" height="96" color="0x182C22FF" />
+          <Label id="lbl_0_2" text="3" font="font:LargeBoldSystemFont" color="0xFFFFFFFF" horizAlign="center" vertAlign="center" width="220" height="96" />
+        </Group>
+
+        <!-- ROW 1: 4, 5, 6 -->
+        <Group id="key_1_0" translation="[20, 114]">
+          <Rectangle id="bg_1_0" width="220" height="96" color="0x182C22FF" />
+          <Label id="lbl_1_0" text="4" font="font:LargeBoldSystemFont" color="0xFFFFFFFF" horizAlign="center" vertAlign="center" width="220" height="96" />
+        </Group>
+        <Group id="key_1_1" translation="[260, 114]">
+          <Rectangle id="bg_1_1" width="220" height="96" color="0x182C22FF" />
+          <Label id="lbl_1_1" text="5" font="font:LargeBoldSystemFont" color="0xFFFFFFFF" horizAlign="center" vertAlign="center" width="220" height="96" />
+        </Group>
+        <Group id="key_1_2" translation="[500, 114]">
+          <Rectangle id="bg_1_2" width="220" height="96" color="0x182C22FF" />
+          <Label id="lbl_1_2" text="6" font="font:LargeBoldSystemFont" color="0xFFFFFFFF" horizAlign="center" vertAlign="center" width="220" height="96" />
+        </Group>
+
+        <!-- ROW 2: 7, 8, 9 -->
+        <Group id="key_2_0" translation="[20, 228]">
+          <Rectangle id="bg_2_0" width="220" height="96" color="0x182C22FF" />
+          <Label id="lbl_2_0" text="7" font="font:LargeBoldSystemFont" color="0xFFFFFFFF" horizAlign="center" vertAlign="center" width="220" height="96" />
+        </Group>
+        <Group id="key_2_1" translation="[260, 228]">
+          <Rectangle id="bg_2_1" width="220" height="96" color="0x182C22FF" />
+          <Label id="lbl_2_1" text="8" font="font:LargeBoldSystemFont" color="0xFFFFFFFF" horizAlign="center" vertAlign="center" width="220" height="96" />
+        </Group>
+        <Group id="key_2_2" translation="[500, 228]">
+          <Rectangle id="bg_2_2" width="220" height="96" color="0x182C22FF" />
+          <Label id="lbl_2_2" text="9" font="font:LargeBoldSystemFont" color="0xFFFFFFFF" horizAlign="center" vertAlign="center" width="220" height="96" />
+        </Group>
+
+        <!-- ROW 3: Clear, 0, Unlock -->
+        <Group id="key_3_0" translation="[20, 342]">
+          <Rectangle id="bg_3_0" width="220" height="96" color="0x2E1A1AFF" />
+          <Label id="lbl_3_0" text="CLEAR" font="font:MediumBoldSystemFont" color="0xFCA5A5FF" horizAlign="center" vertAlign="center" width="220" height="96" />
+        </Group>
+        <Group id="key_3_1" translation="[260, 342]">
+          <Rectangle id="bg_3_1" width="220" height="96" color="0x182C22FF" />
+          <Label id="lbl_3_1" text="0" font="font:LargeBoldSystemFont" color="0xFFFFFFFF" horizAlign="center" vertAlign="center" width="220" height="96" />
+        </Group>
+        <Group id="key_3_2" translation="[500, 342]">
+          <Rectangle id="bg_3_2" width="220" height="96" color="0x103E28FF" />
+          <Label id="lbl_3_2" text="UNLOCK" font="font:MediumBoldSystemFont" color="0x6EE7B7FF" horizAlign="center" vertAlign="center" width="220" height="96" />
+        </Group>
+      </Group>
+    </Group>
+
+    <!-- RIGHT CARD: 1-Click Cabin Selector -->
+    <Group id="cabinsCard" translation="[960, 140]" visible="false">
+      <Rectangle width="860" height="800" color="0x0D1A14EE" />
+      <Rectangle width="860" height="4" color="0xF59E0BFF" />
+
+      <!-- Vertical stack auto-spaces every row based on its real rendered height, so wrapped text can never overlap the row below it -->
+      <LayoutGroup translation="[40, 24]" layoutDirection="vert" itemSpacings="[16, 24, 20, 20, 24]">
+        <Label text="QUICK SELECT PROPERTY (1-CLICK UNLOCK)" font="font:SmallestBoldSystemFont" color="0xF59E0BFF" width="780" />
+        <Label text="Select your cabin below to automatically fill its PIN and unlock the guest portal immediately:" font="font:SmallSystemFont" color="0xCCCCCCFF" width="780" wrap="true" />
+
+        <!-- CABIN 1 -->
+        <Group id="cabinCard_0">
+          <Rectangle id="cabinBg_0" width="780" height="110" color="0x15281EFF" />
+          <Rectangle id="cabinAccent_0" width="8" height="110" color="0x10B981FF" />
+          <Label id="cabinTitle_0" translation="[28, 20]" text="" font="font:MediumBoldSystemFont" color="0xFFFFFFFF" width="560" />
+          <Label id="cabinSub_0" translation="[28, 60]" text="" font="font:SmallSystemFont" color="0x88DDBBFF" width="560" />
+          <Rectangle translation="[620, 32]" width="130" height="46" color="0x0A1810FF" />
+          <Label id="cabinPinBadge_0" translation="[620, 32]" text="" font="font:SmallBoldSystemFont" color="0x34D399FF" horizAlign="center" vertAlign="center" width="130" height="46" />
+        </Group>
+
+        <!-- CABIN 2 -->
+        <Group id="cabinCard_1">
+          <Rectangle id="cabinBg_1" width="780" height="110" color="0x15281EFF" />
+          <Rectangle id="cabinAccent_1" width="8" height="110" color="0x3B82F6FF" />
+          <Label id="cabinTitle_1" translation="[28, 20]" text="" font="font:MediumBoldSystemFont" color="0xFFFFFFFF" width="560" />
+          <Label id="cabinSub_1" translation="[28, 60]" text="" font="font:SmallSystemFont" color="0x93C5FDFF" width="560" />
+          <Rectangle translation="[620, 32]" width="130" height="46" color="0x0A1810FF" />
+          <Label id="cabinPinBadge_1" translation="[620, 32]" text="" font="font:SmallBoldSystemFont" color="0x60A5FAFF" horizAlign="center" vertAlign="center" width="130" height="46" />
+        </Group>
+
+        <!-- CABIN 3 -->
+        <Group id="cabinCard_2">
+          <Rectangle id="cabinBg_2" width="780" height="110" color="0x15281EFF" />
+          <Rectangle id="cabinAccent_2" width="8" height="110" color="0xF59E0BFF" />
+          <Label id="cabinTitle_2" translation="[28, 20]" text="" font="font:MediumBoldSystemFont" color="0xFFFFFFFF" width="560" />
+          <Label id="cabinSub_2" translation="[28, 60]" text="" font="font:SmallSystemFont" color="0xFDE68AFF" width="560" />
+          <Rectangle translation="[620, 32]" width="130" height="46" color="0x0A1810FF" />
+          <Label id="cabinPinBadge_2" translation="[620, 32]" text="" font="font:SmallBoldSystemFont" color="0xFBBF24FF" horizAlign="center" vertAlign="center" width="130" height="46" />
+        </Group>
+
+        <Group>
+          <Rectangle width="780" height="240" color="0x08130ECC" />
+          <LayoutGroup translation="[24, 20]" layoutDirection="vert" itemSpacings="[10, 8, 8]">
+            <Label text="PERSISTENT CABIN RECOGNITION" font="font:SmallestBoldSystemFont" color="0x34D399FF" width="732" />
+            <Label text="• Once unlocked, this TV automatically remembers your cabin and credentials across power cycles and restarts." font="font:SmallestSystemFont" color="0xAAAAAAFF" width="732" wrap="true" />
+            <Label text="• To change properties or re-lock, select 'Lock Property' anytime from the main navigation menu." font="font:SmallestSystemFont" color="0xAAAAAAFF" width="732" wrap="true" />
+            <Label text="• Hosts can customize property details &amp; PINs in the Host Management console." font="font:SmallestSystemFont" color="0x88AAAAFF" width="732" wrap="true" />
+          </LayoutGroup>
+        </Group>
+      </LayoutGroup>
+    </Group>
+
+    <!-- FOOTER -->
+    <Group id="footerGroup" translation="[100, 950]" visible="false">
+      <Rectangle width="1720" height="60" color="0x0A1610EE" />
+      <Label text="[D-Pad] Navigate" translation="[40, 16]" font="font:SmallBoldSystemFont" color="0x88DDBBFF" />
+      <Label text="[OK] Select Digit / Cabin" translation="[460, 16]" font="font:SmallBoldSystemFont" color="0x88DDBBFF" />
+      <Label text="[Back] Erase Digit" translation="[880, 16]" font="font:SmallBoldSystemFont" color="0x88DDBBFF" />
+      <Label text="[0-9 Number Keys] Direct Input" translation="[1280, 16]" font="font:SmallBoldSystemFont" color="0x88DDBBFF" />
+    </Group>
+  </children>
+</component>

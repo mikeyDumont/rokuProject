@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="WeatherView" extends="Group" xsi:noNamespaceSchemaLocation="http://sdkdocs.roku.com/schema/RokuSceneGraph.xsd">
+  <script type="text/brightscript" uri="pkg:/components/WeatherView.brs" />
+  <script type="text/brightscript" uri="pkg:/source/supabase_config.brs" />
+
+  <children>
+    <LayoutGroup translation="[0, 0]" layoutDirection="vert" itemSpacings="[16, 24]">
+      <LayoutGroup layoutDirection="vert" itemSpacings="[6]">
+        <Label text="WEATHER &amp; OUACHITA FOREST CONDITIONS" font="font:LargeBoldSystemFont" color="0xFFFFFFFF" width="1400" />
+        <Label text="Live conditions and 4-day mountain forecast for Hochatown &amp; Beavers Bend State Park." font="font:SmallSystemFont" color="0x88AAAAFF" width="1400" />
+      </LayoutGroup>
+
+      <Group>
+        <Rectangle width="1380" height="200" color="0x122019EE" />
+        <LayoutGroup translation="[40, 32]" layoutDirection="horiz" itemSpacings="[48]">
+          <LayoutGroup layoutDirection="vert" itemSpacings="[4]">
+            <Label text="CURRENTLY IN HOCHATOWN" font="font:SmallestBoldSystemFont" color="0x34D399FF" />
+            <Label id="currentTempLabel" text="--" font="font:LargeBoldSystemFont" color="0xFFFFFFFF" />
+            <Label id="currentConditionLabel" text="Loading current conditions..." font="font:SmallSystemFont" color="0xCCCCCCFF" />
+          </LayoutGroup>
+          <LayoutGroup layoutDirection="vert" itemSpacings="[6]" translation="[0, 10]">
+            <Label id="humidityLabel" text="Humidity: --" font="font:SmallSystemFont" color="0xEEEEEEFF" />
+            <Label id="windLabel" text="Wind: --" font="font:SmallSystemFont" color="0xEEEEEEFF" />
+            <Label id="weatherStatusLabel" text="" font="font:SmallestSystemFont" color="0x88AAAAFF" />
+          </LayoutGroup>
+          <LayoutGroup layoutDirection="vert" itemSpacings="[6]" translation="[0, 10]">
+            <Label id="sunriseLabel" text="Sunrise: --" font="font:SmallSystemFont" color="0xFBBF24FF" />
+            <Label id="sunsetLabel" text="Sunset: --" font="font:SmallSystemFont" color="0xFBBF24FF" />
+          </LayoutGroup>
+        </LayoutGroup>
+      </Group>
+
+      <LayoutGroup layoutDirection="horiz" itemSpacings="[20]">
+        <Group>
+          <Rectangle width="330" height="280" color="0x0E1A14EE" />
+          <LayoutGroup translation="[24, 24]" layoutDirection="vert" itemSpacings="[10]">
+            <Label id="forecastDay_0" text="TODAY" font="font:SmallestBoldSystemFont" color="0x34D399FF" />
+            <Label id="forecastTemp_0" text="--" font="font:MediumBoldSystemFont" color="0xFFFFFFFF" />
+            <Label id="forecastCondition_0" text="Loading forecast..." font="font:SmallSystemFont" color="0xCCCCCCFF" />
+          </LayoutGroup>
+        </Group>
+
+        <Group>
+          <Rectangle width="330" height="280" color="0x0E1A14EE" />
+          <LayoutGroup translation="[24, 24]" layoutDirection="vert" itemSpacings="[10]">
+            <Label id="forecastDay_1" text="TOMORROW" font="font:SmallestBoldSystemFont" color="0x60A5FAFF" />
+            <Label id="forecastTemp_1" text="--" font="font:MediumBoldSystemFont" color="0xFFFFFFFF" />
+            <Label id="forecastCondition_1" text="Loading forecast..." font="font:SmallSystemFont" color="0xCCCCCCFF" />
+          </LayoutGroup>
+        </Group>
+
+        <Group>
+          <Rectangle width="330" height="280" color="0x0E1A14EE" />
+          <LayoutGroup translation="[24, 24]" layoutDirection="vert" itemSpacings="[10]">
+            <Label id="forecastDay_2" text="DAY 3" font="font:SmallestBoldSystemFont" color="0xFBBF24FF" />
+            <Label id="forecastTemp_2" text="--" font="font:MediumBoldSystemFont" color="0xFFFFFFFF" />
+            <Label id="forecastCondition_2" text="Loading forecast..." font="font:SmallSystemFont" color="0xCCCCCCFF" />
+          </LayoutGroup>
+        </Group>
+
+        <Group>
+          <Rectangle width="330" height="280" color="0x0E1A14EE" />
+          <LayoutGroup translation="[24, 24]" layoutDirection="vert" itemSpacings="[10]">
+            <Label id="forecastDay_3" text="DAY 4" font="font:SmallestBoldSystemFont" color="0xA78BFAFF" />
+            <Label id="forecastTemp_3" text="--" font="font:MediumBoldSystemFont" color="0xFFFFFFFF" />
+            <Label id="forecastCondition_3" text="Loading forecast..." font="font:SmallSystemFont" color="0xCCCCCCFF" />
+          </LayoutGroup>
+        </Group>
+      </LayoutGroup>
+    </LayoutGroup>
+  </children>
+</component>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="MainScene" extends="Scene" xsi:noNamespaceSchemaLocation="http://sdkdocs.roku.com/schema/RokuSceneGraph.xsd">
+  <script type="text/brightscript" uri="pkg:/components/MainScene.brs" />
+  <script type="text/brightscript" uri="pkg:/source/api.brs" />
+  <script type="text/brightscript" uri="pkg:/source/supabase_config.brs" />
+
+  <interface>
+    <field id="deepLinkPin" type="string" value="" onChange="onDeepLinkPinChanged" />
+  </interface>
+
+  <children>
+    <Poster id="backgroundPoster" uri="pkg:/images/app_background_fhd.png" width="1920" height="1080" loadDisplayMode="scaleToFill" />
+    <Rectangle id="ambientDimmer" width="1920" height="1080" color="0x06141766" />
+
+    <LayoutGroup id="topHeader" translation="[80, 48]" layoutDirection="horiz" itemSpacings="[40]" visible="false">
+      <Label id="cabinTitleHeader" text="" font="font:MediumBoldSystemFont" color="0xFFFFFFFF" width="600" />
+      <Label id="clockHeader" text="Hochatown • Broken Bow, OK" font="font:SmallSystemFont" color="0x88DDBBFF" width="600" />
+    </LayoutGroup>
+
+    <LayoutGroup id="mainContentGroup" translation="[80, 130]" layoutDirection="horiz" itemSpacings="[32]" visible="false">
+      <Group id="navRailGroup">
+        <Poster uri="pkg:/images/nav_panel.png" width="320" height="880" loadDisplayMode="scaleToFill" />
+        <LabelList id="navRail" translation="[20, 0]" itemSize="[280, 68]" itemSpacing="[0, 10]" focusedColor="0x000000FF" color="0xDDDDDDFF" drawFocusFeedback="true" />
+      </Group>
+      
+      <Group id="activeScreenContainer" translation="[310, 0]">
+        <LayoutGroup id="welcomeView" layoutDirection="vert" itemSpacings="[16, 24]" visible="true">
+          <LayoutGroup layoutDirection="vert" itemSpacings="[6]">
+            <Label id="welcomeGuestLabel" text="" font="font:LargeBoldSystemFont" color="0xFFFFFFFF" width="1400" />
+            <Label id="stayDatesLabel" text="" font="font:MediumSystemFont" color="0x34D399FF" width="1400" />
+          </LayoutGroup>
+          
+          <LayoutGroup layoutDirection="horiz" itemSpacings="[24]">
+            <Group>
+              <Rectangle width="440" height="340" color="0x122019EE" />
+              <LayoutGroup translation="[28, 28]" layoutDirection="vert" itemSpacings="[10, 8, 14]">
+                <Label text="HIGH-SPEED CABIN WI-FI" font="font:SmallestBoldSystemFont" color="0x34D399FF" width="384" wrap="true" />
+                <Label id="wifiNetLabel" text="" font="font:SmallBoldSystemFont" color="0xFFFFFFFF" width="384" wrap="true" />
+                <Label id="wifiPassLabel" text="" font="font:MediumBoldSystemFont" color="0xFBBF24FF" width="384" wrap="true" />
+              </LayoutGroup>
+            </Group>
+
+            <Group>
+              <Rectangle width="440" height="340" color="0x122019EE" />
+              <LayoutGroup translation="[28, 28]" layoutDirection="vert" itemSpacings="[10, 8, 14]">
+                <Label text="STAY TIMES &amp; TRASH" font="font:SmallestBoldSystemFont" color="0x60A5FAFF" width="384" wrap="true" />
+                <Label id="checkInOutLabel" text="" font="font:SmallBoldSystemFont" color="0xFFFFFFFF" width="384" wrap="true" />
+                <Label id="quietHoursLabel" text="" font="font:SmallSystemFont" color="0xCCCCCCFF" width="384" wrap="true" />
+                <Label id="trashDayLabel" text="" font="font:SmallestSystemFont" color="0x88AAAAFF" width="384" wrap="true" />
+              </LayoutGroup>
+            </Group>
+
+            <Group>
+              <Rectangle width="440" height="340" color="0x122019EE" />
+              <LayoutGroup translation="[28, 28]" layoutDirection="vert" itemSpacings="[10, 8, 14]">
+                <Label text="HOST &amp; HELP" font="font:SmallestBoldSystemFont" color="0xFBBF24FF" width="384" wrap="true" />
+                <Label id="hostNameLabel" text="" font="font:SmallBoldSystemFont" color="0xFFFFFFFF" width="384" wrap="true" />
+                <Label id="hostPhoneLabel" text="" font="font:SmallSystemFont" color="0xCCCCCCFF" width="384" wrap="true" />
+                <Label id="emergencyLabel" text="" font="font:SmallestSystemFont" color="0xF87171FF" width="384" wrap="true" />
+              </LayoutGroup>
+            </Group>
+          </LayoutGroup>
+
+          <!-- Dedicated full-width banner keeps the QR code from competing for space inside the compact WI-FI card -->
+          <Group>
+            <Rectangle width="1400" height="200" color="0x122019EE" />
+            <LayoutGroup translation="[32, 30]" layoutDirection="horiz" itemSpacings="[28]">
+              <Poster id="wifiQrPoster" width="150" height="150" loadDisplayMode="scaleToFit" />
+              <LayoutGroup layoutDirection="vert" itemSpacings="[8, 8]">
+                <Label text="SCAN TO CONNECT TO WI-FI" font="font:SmallestBoldSystemFont" color="0x34D399FF" width="1150" wrap="true" />
+                <Label text="Point your phone camera at this QR code to join the cabin's Wi-Fi automatically — no typing required." font="font:SmallSystemFont" color="0xCCCCCCFF" width="1150" wrap="true" />
+                <Label text="Prefer to type it manually? Use the network name and password shown in the card above." font="font:SmallestSystemFont" color="0x88AAAAFF" width="1150" wrap="true" />
+              </LayoutGroup>
+            </LayoutGroup>
+          </Group>
+        </LayoutGroup>
+
+        <HouseRulesView id="houseRulesView" visible="false" />
+        <RecommendationsView id="recommendationsView" visible="false" />
+        <WeatherView id="weatherView" visible="false" />
+        <CheckoutView id="checkoutView" visible="false" />
+        <FeedbackView id="feedbackView" visible="false" />
+      </Group>
+    </LayoutGroup>
+
+    <Group id="bottomTipBar" translation="[80, 1016]" visible="false">
+      <Rectangle width="1760" height="48" color="0x0A1610CC" />
+      <Label translation="[24, 13]" text="Tip: Use Roku Remote D-pad (Left/Right/Up/Down) to explore House Rules, Curated Recommendations, and Departure Checklist." font="font:SmallestSystemFont" color="0x88AAAAFF" width="1712" />
+    </Group>
+
+    <PinGateScreen id="pinGateOverlay" visible="false" />
+    <ScreensaverView id="screensaverOverlay" visible="false" />
+    <StaffMenu id="staffMenu" visible="false" />
+    <Audio id="ambientAudio" />
+    <Timer id="inactivityTimer" repeat="false" duration="180" />
+    <Timer id="checkoutCleanupTimer" repeat="false" duration="1" />
+    <Timer id="preCheckinFetchTimer" repeat="false" duration="1" />
+    <Timer id="staffLongPressTimer" repeat="false" duration="3" />
+    <Timer id="keepAliveTimer" repeat="true" duration="1800" />
+    <Timer id="pinGateFallbackTimer" repeat="false" duration="3" />
+  </children>
+</component>

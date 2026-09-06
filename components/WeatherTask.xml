@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="WeatherTask" extends="Task">
+    <script type="text/brightscript" uri="pkg:/source/supabase_config.brs" />
+    <script type="text/brightscript" uri="pkg:/components/WeatherTask.brs" />
+
+    <interface>
+        <field id="responseJson" type="assocarray" />
+        <field id="responseSuccess" type="boolean" value="false" />
+        <field id="errorMessage" type="string" value="" />
+    </interface>
+</component>

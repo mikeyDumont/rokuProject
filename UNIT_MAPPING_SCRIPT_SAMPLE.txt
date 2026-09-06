@@ -1,0 +1,214 @@
+function myFunction() {
+  var detail = SpreadsheetApp.getActive().getSheetByName('Roku');
+  var unitsUrl = "https://brokenbowvacationcabins.trackhs.com/api/pms/units?size=100&sortColumn=name&sortDirection=asc&isActive=1";
+  const units = [];
+  var lastRow = detail.getLastRow();
+  // Only execute if there is data below row 1
+  if (lastRow >= 2) {
+    // getRange(startRow, startColumn, numRows, numColumns)
+    // Column 6 is F, Column 7 is G. We clear 2 columns.
+    detail.getRange(2, 1, lastRow - 1, 10).clearContent();
+  }
+  detail.getRange("B2").setFormula('=BYROW(A2:A, LAMBDA(row, IF(ISBLANK(row), "", TEXT(row, "0000"))))');
+  var options = {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      authorization: "Basic OTM1NmRhZmYyNzFh-----------------------------------------------------------------------I0ODNiNjAzY2NkOTQ="
+    }
+  };
+var unitResponse = UrlFetchApp.fetch(unitsUrl, options);
+
+  var unitData = JSON.parse(unitResponse.getContentText());
+  var lastPage = unitData._links.last.href;
+  var unitObj = unitData._embedded.units;
+  
+  unitObj.forEach(function(v,i) {
+    units.push({"id": v.id, "name": v.name, "address": v.streetAddress,"location": v.locality, "wifi": v.custom.pms_units_wifi_information, "occupancy": v.maxOccupancy});
+  });
+
+  if (unitData.page_count > 1) {
+    unitResponse = UrlFetchApp.fetch(lastPage, options);
+    unitData = JSON.parse(unitResponse.getContentText());
+    unitObj = unitData._embedded.units;
+
+    unitObj.forEach(function(v,i) {
+      units.push({"id": v.id, "name": v.name, "address": v.streetAddress, "location": v.locality, "wifi": v.custom.pms_units_wifi_information, "occupancy": v.maxOccupancy});
+    });
+  }
+
+  // Regex pattern to handle variations in labels and spaces
+  var wifiRegex = /^(?:Username|Network):\s*(.*?)\s+(?:Password|password)\s*:\s*(.*)$/i;
+
+  units.forEach(function(v, i) {
+    var row = i + 2;
+    detail.getRange(row, 1).setValue(v.id);
+    detail.getRange(row, 3).setValue(v.name);
+    detail.getRange(row, 4).setValue(v.location);
+    detail.getRange(row, 5).setValue(v.address);
+    detail.getRange(row, 10).setValue(v.occupancy);
+
+    var rawWifi = v.wifi ? v.wifi.toString().trim() : "";
+    var match = rawWifi.match(wifiRegex);
+
+    if (match) {
+      detail.getRange(row, 8).setValue(match[1].trim());  // Network Name -> Column I
+      detail.getRange(row, 9).setValue(match[2].trim()); // Password -> Column J
+    } else {
+      // Fallback if the string doesn't match the standard pattern
+      detail.getRange(row, 8).setValue(rawWifi);
+      detail.getRange(row, 9).setValue("");
+    }
+  });
+}
+function getReservations() {
+  var date = Utilities.formatDate(new Date(), "GMT+1", "yyyy-MM-dd");
+  var detail = SpreadsheetApp.getActive().getSheetByName('Roku');
+  
+  var resURL = "https://brokenbowvacationcabins.trackhs.com/api/pms/reservations?sortColumn=checkin&sortDirection=asc&arrivalStart=" + date + "&arrivalEnd=" + date + "&scroll=1&status=confirmed&size=100";
+  
+  var options = {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      authorization: "Basic OTM1NmRhZmYyNz--------------------------------------------------------------------DNiNjAzY2NkOTQ="
+    }
+  };
+
+  var resResponse = UrlFetchApp.fetch(resURL, options);
+  var resData = JSON.parse(resResponse.getContentText());
+  var lastPage = (resData.page_count > 1 && resData._links && resData._links.last) ? resData._links.last.href : null;
+  
+  var res = [];
+
+  function processReservations(reservationsArray) {
+    if (!reservationsArray) return;
+    reservationsArray.forEach(function(v) {
+      var arrival = Utilities.formatDate(new Date(v.arrivalDate), Session.getScriptTimeZone(), 'MMM-dd');
+      var departure = Utilities.formatDate(new Date(v.departureDate), Session.getScriptTimeZone(), 'MMM-dd');
+      res.push({
+        "reservationId": v.id,
+        "unitId": v._embedded && v._embedded.unit ? String(v._embedded.unit.id).trim() : "",
+        "stay_dates": arrival + ' - ' + departure,
+        "name": v._embedded && v._embedded.contact ? v._embedded.contact.name : ""
+      });
+    });
+  }
+
+  if (resData._embedded && resData._embedded.reservations) {
+    processReservations(resData._embedded.reservations);
+  }
+
+  if (resData.page_count > 1 && lastPage) {
+    var lastPageResponse = UrlFetchApp.fetch(lastPage, options);
+    var lastPageData = JSON.parse(lastPageResponse.getContentText());
+    if (lastPageData._embedded && lastPageData._embedded.reservations) {
+      processReservations(lastPageData._embedded.reservations);
+    }
+  }
+
+  // Map by unitId so we can match against the sheet's "id" column
+  var dataObject = {};
+  res.forEach(function(item) {
+    if (item.unitId) {
+      dataObject[item.unitId] = item;
+    }
+  });
+
+  const dataRange = detail.getDataRange().getValues();
+  const headers = dataRange[0];
+  const idColIndex = headers.indexOf("id");
+  const nameColIndex = headers.indexOf("guest_name");
+  const stayDatesColIndex = headers.indexOf("stay_dates");
+
+  if (idColIndex === -1 || nameColIndex === -1 || stayDatesColIndex === -1) {
+    throw new Error("Could not find 'id', 'guest_name', or 'stay_dates' columns in the 'Roku' sheet headers.");
+  }
+
+  for (let i = 1; i < dataRange.length; i++) {
+    const rowId = String(dataRange[i][idColIndex]).trim();
+    
+    if (rowId && dataObject[rowId]) {
+      const v = dataObject[rowId];
+      detail.getRange(i + 1, nameColIndex + 1).setValue(v.name);
+      detail.getRange(i + 1, stayDatesColIndex + 1).setValue(v.stay_dates);
+    }
+  }
+}
+  
+  
+
+function syncPropertiesToSupabase() {
+  const sheetName = "Roku"; 
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
+  const dataRange = sheet.getDataRange().getDisplayValues();
+  
+  if (dataRange.length < 2) return; 
+
+  const headers = dataRange[0];
+  const rows = dataRange.slice(1);
+
+  const colIndex = {
+    id: headers.indexOf("id"),
+    pin: headers.indexOf("pin"),
+    name: headers.indexOf("name"),
+    location: headers.indexOf("location"),
+    address: headers.indexOf("address"),
+    guest_name: headers.indexOf("guest_name"),
+    stay_dates: headers.indexOf("stay_dates"),
+    wifi_network: headers.indexOf("wifi_network"),
+    wifi_password: headers.indexOf("wifi_password"),
+    max_occupancy: headers.indexOf("max_occupancy")
+  };
+
+  for (let key in colIndex) {
+    if (colIndex[key] === -1) {
+      throw new Error(`Missing expected column header: ${key}`);
+    }
+  }
+
+  const payload = rows.map(row => {
+    return {
+      id: row[colIndex.id],
+      pin: row[colIndex.pin] ? String(row[colIndex.pin]).trim() : null,
+      name: row[colIndex.name],
+      location: row[colIndex.location],
+      address: row[colIndex.address],
+      guest_name: row[colIndex.guest_name] || null,
+      stay_dates: row[colIndex.stay_dates] || null,
+      wifi_network: row[colIndex.wifi_network],
+      wifi_password: row[colIndex.wifi_password],
+      max_occupancy: row[colIndex.max_occupancy] ? Number(row[colIndex.max_occupancy]) : null,
+      updated_at: new Date().toISOString()
+    };
+  }).filter(item => item.id); 
+
+  if (payload.length === 0) return;
+
+  const scriptProperties = PropertiesService.getScriptProperties();
+  const supabaseUrl = scriptProperties.getProperty("SUPABASE_URL");
+  const serviceKey = scriptProperties.getProperty("SUPABASE_SERVICE_KEY");
+
+  const url = `${supabaseUrl}/rest/v1/properties`;
+
+  const options = {
+    method: "post",
+    contentType: "application/json",
+    headers: {
+      "apikey": serviceKey,
+      "Authorization": `Bearer ${serviceKey}`,
+      "Prefer": "resolution=merge-duplicates" 
+    },
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true
+  };
+
+  const response = UrlFetchApp.fetch(url, options);
+  const responseCode = response.getResponseCode();
+  
+  if (responseCode >= 200 && responseCode < 300) {
+    Logger.log("Successfully synced properties to Supabase.");
+  } else {
+    Logger.log(`Error syncing to Supabase: ${response.getContentText()}`);
+  }
+}

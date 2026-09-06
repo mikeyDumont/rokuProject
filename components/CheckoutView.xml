@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="CheckoutView" extends="Group" xsi:noNamespaceSchemaLocation="http://sdkdocs.roku.com/schema/RokuSceneGraph.xsd">
+  <script type="text/brightscript" uri="pkg:/components/CheckoutView.brs" />
+  <script type="text/brightscript" uri="pkg:/source/api.brs" />
+  <script type="text/brightscript" uri="pkg:/source/supabase_config.brs" />
+
+  <interface>
+    <field id="property" type="assocarray" />
+  </interface>
+
+  <children>
+    <LayoutGroup translation="[0, 0]" layoutDirection="vert" itemSpacings="[16, 24]">
+      <LayoutGroup layoutDirection="vert" itemSpacings="[6]">
+        <Label text="DEPARTURE CHECKLIST &amp; GUEST FEEDBACK" font="font:LargeBoldSystemFont" color="0xFFFFFFFF" width="1400" />
+        <Label text="Please complete the simple checklist below before your departure." font="font:SmallSystemFont" color="0x88AAAAFF" width="1400" />
+      </LayoutGroup>
+
+      <LayoutGroup layoutDirection="horiz" itemSpacings="[28]">
+        <Group>
+          <Rectangle width="660" height="560" color="0x122019EE" />
+          <LayoutGroup translation="[28, 28]" layoutDirection="vert" itemSpacings="[12, 16]">
+            <Label text="BEFORE YOU LEAVE (PRESS OK TO TOGGLE)" font="font:SmallestBoldSystemFont" color="0x34D399FF" width="604" />
+            <LabelList id="tasksList" itemSize="[604, 64]" itemSpacing="[0, 8]" focusedColor="0x000000FF" color="0xEEEEEEFF" drawFocusFeedback="true" />
+          </LayoutGroup>
+        </Group>
+
+        <Group id="summaryPanel">
+          <Rectangle width="680" height="560" color="0x122019EE" />
+          <LayoutGroup translation="[32, 28]" layoutDirection="vert" itemSpacings="[12, 16, 18, 22]">
+            <Label text="RESERVATION DEPARTURE INFO" font="font:SmallestBoldSystemFont" color="0xFBBF24FF" width="616" />
+            <Label id="checkoutTimeLabel" text="Check-Out: 11:00 AM" font="font:MediumBoldSystemFont" color="0xFFFFFFFF" width="616" />
+            <Label id="trashScheduleLabel" text="Trash: Secure in CTS Bins by Driveway" font="font:SmallBoldSystemFont" color="0x34D399FF" wrap="true" width="616" />
+            
+            <Group>
+              <Rectangle width="616" height="140" color="0x0A1410CC" />
+              <LayoutGroup translation="[20, 16]" layoutDirection="vert" itemSpacings="[6]">
+                <Label text="HOST CONTACT &amp; ASSISTANCE" font="font:SmallestBoldSystemFont" color="0x60A5FAFF" width="576" />
+                <Label id="hostContactLabel" text="Reservations • (580) 306-2287" font="font:SmallSystemFont" color="0xEEEEEEFF" wrap="true" width="576" />
+                <Label id="emergencyLabel" text="Emergency: Dial 911" font="font:SmallestSystemFont" color="0xF87171FF" wrap="true" width="576" />
+              </LayoutGroup>
+            </Group>
+
+            <Label text="Thank you for staying with us! Safe travels home." font="font:SmallSystemFont" color="0x88AAAAFF" wrap="true" width="616" />
+          </LayoutGroup>
+        </Group>
+      </LayoutGroup>
+    </LayoutGroup>
+  </children>
+</component>

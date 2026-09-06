@@ -1,0 +1,16 @@
+title=Broken Bow Vacation Cabins
+major_version=1
+minor_version=0
+build_version=101
+mm_icon_focus_hd=pkg:/images/icon_focus_hd.png
+mm_icon_focus_sd=pkg:/images/icon_focus_sd.png
+mm_icon_focus_fhd=pkg:/images/icon_focus_fhd.png
+splash_screen_fhd=pkg:/images/splash_fhd.png
+splash_screen_hd=pkg:/images/splash_hd.png
+splash_color=#0c1410
+ui_resolutions=fhd
+supports_input_launch=1
+
+# Supabase Configuration (Optional - can also configure in source/supabase_config.brs)
+supabase_url=https://rbuyznszkwdyafiujhas.supabase.co
+supabase_anon_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJidXl6bnN6a3dkeWFmaXVqaGFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4MDIyNjQsImV4cCI6MjEwMzM3ODI2NH0.Ihn-GI8_RZlm5QK2AOceV-7lOO2u33d63kQhN3kZiok

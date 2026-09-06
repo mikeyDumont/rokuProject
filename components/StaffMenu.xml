@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="StaffMenu" extends="Group" xsi:noNamespaceSchemaLocation="http://sdkdocs.roku.com/schema/RokuSceneGraph.xsd">
+  <script type="text/brightscript" uri="pkg:/components/StaffMenu.brs" />
+  <script type="text/brightscript" uri="pkg:/source/api.brs" />
+
+  <interface>
+    <field id="staffAction" type="string" value="" alwaysNotify="true" />
+    <field id="deviceId" type="string" value="" />
+    <field id="deviceToken" type="string" value="" />
+    <field id="staffToken" type="string" value="" />
+    <field id="isVisible" type="boolean" value="false" alwaysNotify="true" />
+  </interface>
+
+  <children>
+    <!-- Modal backdrop -->
+    <Rectangle width="1920" height="1080" color="0x000000CC" />
+
+    <!-- Staff menu card -->
+    <Group translation="[560, 300]">
+      <Rectangle width="800" height="480" color="0x0D1A14FF" />
+      <Rectangle width="800" height="4" color="0xF59E0BFF" />
+
+      <LayoutGroup translation="[40, 40]" layoutDirection="vert" itemSpacings="[20, 24, 20, 20, 24]">
+        <Label text="STAFF MENU" font="font:MediumBoldSystemFont" color="0xF59E0BFF" width="720" horizAlign="center" />
+        <Label text="Enter company PIN to access staff functions" font="font:SmallSystemFont" color="0xCCCCCCFF" width="720" horizAlign="center" />
+
+        <!-- PIN entry -->
+        <Group>
+          <LayoutGroup layoutDirection="horiz" itemSpacings="[12]">
+            <Group id="staffPinBox1">
+              <Rectangle id="staffPinBg1" width="60" height="60" color="0x162A20FF" />
+              <Label id="staffPinText1" text="" font="font:MediumBoldSystemFont" color="0x34D399FF" horizAlign="center" vertAlign="center" width="60" height="60" />
+            </Group>
+            <Group id="staffPinBox2">
+              <Rectangle id="staffPinBg2" width="60" height="60" color="0x162A20FF" />
+              <Label id="staffPinText2" text="" font="font:MediumBoldSystemFont" color="0x34D399FF" horizAlign="center" vertAlign="center" width="60" height="60" />
+            </Group>
+            <Group id="staffPinBox3">
+              <Rectangle id="staffPinBg3" width="60" height="60" color="0x162A20FF" />
+              <Label id="staffPinText3" text="" font="font:MediumBoldSystemFont" color="0x34D399FF" horizAlign="center" vertAlign="center" width="60" height="60" />
+            </Group>
+            <Group id="staffPinBox4">
+              <Rectangle id="staffPinBg4" width="60" height="60" color="0x162A20FF" />
+              <Label id="staffPinText4" text="" font="font:MediumBoldSystemFont" color="0x34D399FF" horizAlign="center" vertAlign="center" width="60" height="60" />
+            </Group>
+          </LayoutGroup>
+        </Group>
+
+        <Label id="staffStatusLabel" text="Use number keys to enter PIN" font="font:SmallestSystemFont" color="0x88DDBBFF" width="720" horizAlign="center" />
+
+        <!-- Action buttons -->
+        <LayoutGroup layoutDirection="horiz" itemSpacings="[24]" horizAlignment="center">
+          <Group id="staffBtnRefresh">
+            <Rectangle id="staffBtnRefreshBg" width="200" height="60" color="0x103E28FF" />
+            <Label id="staffBtnRefreshLabel" text="Refresh" font="font:SmallBoldSystemFont" color="0x6EE7B7FF" horizAlign="center" vertAlign="center" width="200" height="60" />
+          </Group>
+          <Group id="staffBtnReassign">
+            <Rectangle id="staffBtnReassignBg" width="200" height="60" color="0x2E1A1AFF" />
+            <Label id="staffBtnReassignLabel" text="Reassign" font="font:SmallBoldSystemFont" color="0xFCA5A5FF" horizAlign="center" vertAlign="center" width="200" height="60" />
+          </Group>
+        </LayoutGroup>
+
+        <Label text="[Back] Cancel  |  [OK] Confirm/Select  |  [D-Pad] Navigate" font="font:SmallestSystemFont" color="0x88AAAAFF" width="720" horizAlign="center" />
+        <Label text="Hold Replay button for 3 seconds to open this menu" font="font:SmallestSystemFont" color="0x666666FF" width="720" horizAlign="center" />
+      </LayoutGroup>
+    </Group>
+  </children>
+</component>

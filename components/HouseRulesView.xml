@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="HouseRulesView" extends="Group" xsi:noNamespaceSchemaLocation="http://sdkdocs.roku.com/schema/RokuSceneGraph.xsd">
+  <script type="text/brightscript" uri="pkg:/components/HouseRulesView.brs" />
+  <script type="text/brightscript" uri="pkg:/source/api.brs" />
+  <script type="text/brightscript" uri="pkg:/source/supabase_config.brs" />
+
+  <interface>
+    <field id="property" type="assocarray" />
+  </interface>
+
+  <children>
+    <LayoutGroup translation="[0, 0]" layoutDirection="vert" itemSpacings="[16, 24]">
+      <LayoutGroup layoutDirection="vert" itemSpacings="[6]">
+        <Label text="HOUSE RULES &amp; AMENITY GUIDELINES" font="font:LargeBoldSystemFont" color="0xFFFFFFFF" width="1400" />
+        <Label text="Please review the essential checkout guidelines below." font="font:SmallSystemFont" color="0x88AAAAFF" width="1400" />
+      </LayoutGroup>
+
+      <LayoutGroup layoutDirection="horiz" itemSpacings="[28]">
+        <LabelList id="rulesList" itemSize="[460, 64]" itemSpacing="[0, 8]" focusedColor="0x000000FF" color="0xEEEEEEFF" drawFocusFeedback="true" />
+        <Group>
+          <Rectangle width="880" height="560" color="0x122019EE" />
+          <LayoutGroup translation="[32, 32]" layoutDirection="vert" itemSpacings="[12, 16, 18, 22]">
+            <Label id="detailCategoryLabel" text="SAFETY &amp; AMENITIES" font="font:SmallestBoldSystemFont" color="0x34D399FF" width="816" />
+            <Label id="detailTitleLabel" text="Hot Tub Guidelines &amp; Care" font="font:MediumBoldSystemFont" color="0xFFFFFFFF" width="816" />
+            <Label id="detailSummaryLabel" text="Shower before use, secure thermal cover after each soak, max 104°F." font="font:SmallBoldSystemFont" color="0xFBBF24FF" wrap="true" width="816" />
+            <Label id="detailBodyLabel" text="1. Rinse off lotions before entering. 2. Keep cover latched when not in use. 3. No glass anywhere near hot tub." font="font:SmallSystemFont" color="0xCCCCCCFF" wrap="true" width="816" />
+            <Label id="detailFineLabel" text="Notice: $250 drain and sanitization fee for glass or contamination." font="font:SmallestSystemFont" color="0xF87171FF" wrap="true" width="816" />
+          </LayoutGroup>
+        </Group>
+      </LayoutGroup>
+    </LayoutGroup>
+  </children>
+</component>

@@ -1,0 +1,18 @@
+# Roku package release builds and zip archives
+*.zip
+release/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs & temp files
+*.log
+scratch/

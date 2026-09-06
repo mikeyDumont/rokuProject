@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="RecommendationsView" extends="Group" xsi:noNamespaceSchemaLocation="http://sdkdocs.roku.com/schema/RokuSceneGraph.xsd">
+  <script type="text/brightscript" uri="pkg:/components/RecommendationsView.brs" />
+  <script type="text/brightscript" uri="pkg:/source/api.brs" />
+  <script type="text/brightscript" uri="pkg:/source/supabase_config.brs" />
+
+  <interface>
+    <field id="property" type="assocarray" />
+  </interface>
+
+  <children>
+    <LayoutGroup translation="[0, 0]" layoutDirection="vert" itemSpacings="[16, 24]">
+      <LayoutGroup layoutDirection="vert" itemSpacings="[6]">
+        <Label text="CURATED HOCHATOWN &amp; BROKEN BOW RECOMMENDATIONS" font="font:LargeBoldSystemFont" color="0xFFFFFFFF" width="1400" />
+        <Label text="Handpicked local dining, hiking trails, lake marinas, and craft breweries recommended by your host." font="font:SmallSystemFont" color="0x88AAAAFF" width="1400" />
+      </LayoutGroup>
+
+      <LayoutGroup layoutDirection="horiz" itemSpacings="[28]">
+        <LabelList id="recList" itemSize="[460, 64]" itemSpacing="[0, 8]" focusedColor="0x000000FF" color="0xEEEEEEFF" drawFocusFeedback="true" />
+        <Group>
+          <Rectangle width="880" height="560" color="0x122019EE" />
+          <LayoutGroup translation="[32, 32]" layoutDirection="vert" itemSpacings="[12, 14, 16, 18, 20]">
+            <LayoutGroup layoutDirection="horiz" itemSpacings="[24]">
+              <Label id="recCategoryLabel" text="HIKING &amp; NATURE" font="font:SmallestBoldSystemFont" color="0x34D399FF" width="400" />
+              <Label id="recRatingLabel" text="4.9 / 5 - Free" font="font:SmallestBoldSystemFont" color="0xFBBF24FF" width="380" />
+            </LayoutGroup>
+            <Label id="recNameLabel" text="Friends Trail Loop" font="font:MediumBoldSystemFont" color="0xFFFFFFFF" width="816" />
+            <Label id="recDistanceLabel" text="1.8 miles • 4 min drive from cabin" font="font:SmallBoldSystemFont" color="0x60A5FAFF" width="816" />
+            <Label id="recDescLabel" text="Scenic 1.5-mile loop along the Mountain Fork River rapids." font="font:SmallSystemFont" color="0xCCCCCCFF" wrap="true" width="816" />
+            <Group>
+              <Rectangle width="816" height="140" color="0x0A1410CC" />
+              <LayoutGroup translation="[20, 16]" layoutDirection="vert" itemSpacings="[6]">
+                <Label text="HOST INSIDER TIP:" font="font:SmallestBoldSystemFont" color="0xFBBF24FF" width="776" />
+                <Label id="recHostTipLabel" text="Start early before 9:30 AM to catch the morning river mist." font="font:SmallSystemFont" color="0xEEEEEEFF" wrap="true" width="776" />
+              </LayoutGroup>
+            </Group>
+          </LayoutGroup>
+        </Group>
+      </LayoutGroup>
+    </LayoutGroup>
+  </children>
+</component>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="ScreensaverView" extends="Group" xsi:noNamespaceSchemaLocation="http://sdkdocs.roku.com/schema/RokuSceneGraph.xsd">
+  <script type="text/brightscript" uri="pkg:/components/ScreensaverView.brs" />
+
+  <interface>
+    <field id="cabinName" type="string" value="" onChange="onCabinChanged" />
+    <field id="guestName" type="string" value="" onChange="onGuestChanged" />
+  </interface>
+
+  <children>
+    <Rectangle width="1920" height="1080" color="0x040806FA" />
+    <LayoutGroup id="floatingCard" translation="[560, 360]" layoutDirection="vert" itemSpacings="[14, 18, 24, 20]" horizAlignment="center">
+      <Label id="ssTimeLabel" text="3:45 PM" font="font:LargeBoldSystemFont" color="0xFFFFFFFF" horizAlign="center" width="800" />
+      <Label id="ssCabinLabel" text="" font="font:MediumSystemFont" color="0x34D399FF" horizAlign="center" width="800" />
+      <Label id="ssGuestLabel" text="" font="font:SmallSystemFont" color="0xCCCCCCFF" horizAlign="center" width="800" />
+      <Label text="Press any key on Roku remote to wake up dashboard" font="font:SmallestSystemFont" color="0x88AAAAFF" horizAlign="center" width="800" />
+    </LayoutGroup>
+    <Timer id="clockTimer" repeat="true" duration="30" />
+    <Timer id="driftTimer" repeat="true" duration="1" />
+  </children>
+</component>
