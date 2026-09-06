@@ -37,10 +37,12 @@ function Resize-Image {
     Write-Output "Successfully resized company logo: $TargetPath ($NewWidth x $NewHeight)"
 }
 
-# Resize FHD icon (540x303) and SD icon (216x144) from existing company logo
+# Resize FHD icon (540x303), HD icon (290x210), and SD icon (246x140) from existing company logo
 $fhdPath = Join-Path $imagesDir "icon_focus_fhd.png"
+$hdPath  = Join-Path $imagesDir "icon_focus_hd.png"
 $sdPath  = Join-Path $imagesDir "icon_focus_sd.png"
 
 Resize-Image -SourcePath $fhdPath -TargetPath $fhdPath -NewWidth 540 -NewHeight 303
-Resize-Image -SourcePath $sdPath  -TargetPath $sdPath  -NewWidth 216 -NewHeight 144
+Resize-Image -SourcePath $hdPath  -TargetPath $hdPath  -NewWidth 290 -NewHeight 210
+Resize-Image -SourcePath $sdPath  -TargetPath $sdPath  -NewWidth 246 -NewHeight 140
 
