@@ -43,3 +43,4 @@ $sdPath  = Join-Path $imagesDir "icon_focus_sd.png"
 
 Resize-Image -SourcePath $fhdPath -TargetPath $fhdPath -NewWidth 540 -NewHeight 303
 Resize-Image -SourcePath $sdPath  -TargetPath $sdPath  -NewWidth 216 -NewHeight 144
+
