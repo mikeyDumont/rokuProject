@@ -300,9 +300,9 @@ function New-NavPanelImage {
 }
 
 # Channel focus icons (Roku standard sizes)
-New-IconImage -Path (Join-Path $imagesDir "icon_focus_sd.png")  -Width 130  -Height 108 -WithWordmark $false
+New-IconImage -Path (Join-Path $imagesDir "icon_focus_sd.png")  -Width 216  -Height 144 -WithWordmark $false
 New-IconImage -Path (Join-Path $imagesDir "icon_focus_hd.png")  -Width 336  -Height 210 -WithWordmark $true
-New-IconImage -Path (Join-Path $imagesDir "icon_focus_fhd.png") -Width 336  -Height 210 -WithWordmark $true
+New-IconImage -Path (Join-Path $imagesDir "icon_focus_fhd.png") -Width 540  -Height 303 -WithWordmark $true
 
 # Splash screens
 New-SplashImage -Path (Join-Path $imagesDir "splash_hd.png")  -Width 1280 -Height 720
