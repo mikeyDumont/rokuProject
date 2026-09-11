@@ -9,7 +9,7 @@
   </interface>
 
   <children>
-    <LayoutGroup translation="[0, 0]" layoutDirection="vert" itemSpacings="[16, 24]">
+    <LayoutGroup id="discountSection" translation="[0, 0]" layoutDirection="vert" itemSpacings="[16, 24]" visible="false">
       <LayoutGroup layoutDirection="vert" itemSpacings="[6]">
         <Label text="RETURNING GUEST PERK" font="font:LargeBoldSystemFont" color="0xFFFFFFFF" width="1400" horizAlign="center" />
         <Label text="Enjoy an exclusive direct-booking discount on your next Broken Bow getaway." font="font:SmallSystemFont" color="0x88AAAAFF" width="1400" horizAlign="center" />
@@ -19,20 +19,20 @@
         <Group id="promoPanel">
           <Rectangle width="1400" height="500" color="0x122019EE" />
           <LayoutGroup translation="[48, 40]" layoutDirection="vert" itemSpacings="[14, 16, 18, 20]">
-            <Label text="RETURNING GUEST VIP PERK" font="font:SmallestBoldSystemFont" color="0xFBBF24FF" width="1304" horizAlign="center" />
+            <Label id="discountTitleLabel" text="RETURNING GUEST VIP PERK" font="font:SmallestBoldSystemFont" color="0xFBBF24FF" width="1304" horizAlign="center" />
             <Label text="Direct Booking Discount Code:" font="font:SmallSystemFont" color="0xCCCCCCFF" width="1304" horizAlign="center" />
             
             <Group>
               <Rectangle width="1304" height="76" color="0x0F5132FF" />
-              <Label text="PINESVIP15" font="font:LargeBoldSystemFont" color="0x34D399FF" horizAlign="center" vertAlign="center" width="1304" height="76" />
+              <Label id="discountCodeLabel" text="PINESVIP15" font="font:LargeBoldSystemFont" color="0x34D399FF" horizAlign="center" vertAlign="center" width="1304" height="76" />
             </Group>
             
-            <Label text="Enjoy 15% off your next getaway when booking directly with your host!" font="font:SmallSystemFont" color="0x88AAAAFF" wrap="true" width="1304" horizAlign="center" />
+            <Label id="discountDescLabel" text="Enjoy 15% off your next getaway when booking directly with your host!" font="font:SmallSystemFont" color="0x88AAAAFF" wrap="true" width="1304" horizAlign="center" />
 
             <Group>
               <Rectangle width="1304" height="172" color="0x0A1410CC" />
               <LayoutGroup translation="[24, 18]" layoutDirection="vert" itemSpacings="[6]">
-                <Label text="Book your next stay now and claim the 15% direct booking discount!" font="font:SmallestBoldSystemFont" color="0x34D399FF" width="1256" horizAlign="center" />
+                <Label id="discountBannerLabel" text="Book your next stay now and claim the 15% direct booking discount!" font="font:SmallestBoldSystemFont" color="0x34D399FF" width="1256" horizAlign="center" />
                 <Label text="Visit our website:" font="font:SmallestSystemFont" color="0xCCCCCCFF" width="1256" horizAlign="center" />
                 <Label text="https://brokenbowvacationcabins.com" font="font:SmallBoldSystemFont" color="0x60A5FAFF" width="1256" horizAlign="center" />
                 <Label text="Thanks again for choosing Broken Bow Vacation Cabins!" font="font:SmallestSystemFont" color="0x88AAAAFF" wrap="true" width="1256" horizAlign="center" />

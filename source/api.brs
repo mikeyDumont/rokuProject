@@ -179,6 +179,16 @@ function MapSupabaseCheckoutTask(row as Object) as Object
     }
 end function
 
+function MapSupabaseDiscount(row as Object) as Object
+    if row = invalid then return invalid
+    return {
+        title: row.title,
+        code: row.code,
+        description: row.description,
+        bannerText: row.banner_text
+    }
+end function
+
 function BuildWifiQrUri(ssid as String, password as String) as String
     wifiPayload = "WIFI:T:WPA;S:" + ssid + ";P:" + password + ";;"
     encodedPayload = UrlEncodeString(wifiPayload)

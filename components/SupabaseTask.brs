@@ -29,6 +29,8 @@ sub executeTask()
             endpoint = "recommendations"
         else if reqType = "GET_CHECKOUT_TASKS"
             endpoint = "checkout_tasks"
+        else if reqType = "GET_ACTIVE_DISCOUNT"
+            endpoint = "discounts"
         else if reqType = "POST_FEEDBACK"
             endpoint = "guest_feedback"
         end if
@@ -65,6 +67,12 @@ sub executeTask()
                 queryFilter = "or=(property_id.eq." + m.top.propertyId + ",property_id.is.null)&order=sort_order.asc"
             else
                 queryFilter = "order=sort_order.asc"
+            end if
+        else if reqType = "GET_ACTIVE_DISCOUNT"
+            if m.top.propertyId <> ""
+                queryFilter = "is_active=eq.true&or=(property_id.eq." + m.top.propertyId + ",property_id.is.null)&order=sort_order.asc&limit=1"
+            else
+                queryFilter = "is_active=eq.true&order=sort_order.asc&limit=1"
             end if
         end if
     end if
