@@ -57,6 +57,20 @@ If `supabase_live_alignment.sql` is run again later, rerun `supabase_guest_displ
 
 ## Release Package
 
+### Ambient Audio Delivery
+
+`forest_ambience.mp3` is intentionally streamed by the Roku `Audio` node and is excluded from the release ZIP. Keep the source master in [audio/forest_ambience.mp3](audio/forest_ambience.mp3), but do not serve production media from the mutable GitHub `main` branch.
+
+Run [supabase_device_access_security.sql](supabase_device_access_security.sql) to create the media authorization RPC and private `channel-media` Storage bucket. Upload the approved full-length MP3 at `ambient/forest_ambience-v1.mp3`. Deploy the `ambient-audio` function without platform JWT verification because Roku's `Audio` node cannot send authorization headers; the function instead verifies the server-issued device credential before issuing a one-hour signed URL:
+
+```powershell
+supabase functions deploy ambient-audio --no-verify-jwt
+```
+
+The app uses this function automatically once deployed. Keep the bucket private, retain the MP3 format for Roku compatibility, and use a new versioned object path when replacing the track. Do not place a Supabase service-role key or Storage secret in the Roku package.
+
+The full-length local master is retained for upload and revision control but is not part of the packaged channel.
+
 Set a new `build_version` in `manifest` for every uploaded build. Create a clean package from the project root with:
 
 ```powershell

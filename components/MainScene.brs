@@ -9,7 +9,6 @@ sub init()
     end if
     if m.ambientAudio <> invalid
         ambientContent = CreateObject("roSGNode", "ContentNode")
-        ambientContent.url = "pkg:/audio/forest_ambience.mp3"
         ambientContent.streamFormat = "mp3"
         m.ambientAudio.content = ambientContent
         m.ambientAudio.observeField("state", "onAmbientAudioStateChanged")
@@ -458,9 +457,28 @@ end sub
 
 sub playAmbientAudio()
     if m.ambientAudio <> invalid
+        audioUrl = buildAmbientAudioUrl()
+        if audioUrl = "" then return
+        if m.ambientAudio.content <> invalid and m.ambientAudio.content.url <> audioUrl
+            m.ambientAudio.content.url = audioUrl
+        end if
         m.ambientAudio.control = "play"
     end if
 end sub
+
+function buildAmbientAudioUrl() as String
+    deviceId = GetDeviceId()
+    deviceToken = GetSavedDeviceToken()
+    if deviceId = "" or deviceToken = ""
+        return ""
+    end if
+
+    baseUrl = GetSupabaseUrl()
+    if Right(baseUrl, 1) = "/"
+        baseUrl = Left(baseUrl, Len(baseUrl) - 1)
+    end if
+    return baseUrl + "/functions/v1/ambient-audio?device_id=" + UrlEncodeString(deviceId) + "&device_token=" + UrlEncodeString(deviceToken)
+end function
 
 sub stopAmbientAudio()
     if m.ambientAudio <> invalid

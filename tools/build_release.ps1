@@ -17,8 +17,7 @@ $requiredEntries = @(
     "manifest",
     "source",
     "components",
-    "images",
-    "audio"
+    "images"
 )
 
 foreach ($entry in $requiredEntries) {
@@ -66,3 +65,4 @@ try {
 }
 
 Write-Output "Release package successfully created with POSIX forward slashes: $packagePath"
+
