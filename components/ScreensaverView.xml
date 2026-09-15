@@ -17,5 +17,8 @@
     </LayoutGroup>
     <Timer id="clockTimer" repeat="true" duration="30" />
     <Timer id="driftTimer" repeat="true" duration="1" />
+    <Animation id="driftAnimation" duration="1.0" easeFunction="linear" repeat="false">
+      <Vector2DFieldInterpolator id="driftInterpolator" key="[0.0, 1.0]" fieldToInterp="floatingCard.translation" />
+    </Animation>
   </children>
 </component>

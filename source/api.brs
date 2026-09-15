@@ -153,14 +153,20 @@ end function
 function MapSupabaseRecommendation(row as Object) as Object
     if row = invalid then return invalid
     return {
-        name: row.name,
-        category: row.category,
-        distance: row.distance,
-        rating: row.rating,
-        price: row.price,
-        description: row.description,
-        hostTip: row.host_tip
+        name: SafeStr(row.name),
+        category: SafeStr(row.category),
+        address: SafeStr(row.address),
+        rating: SafeStr(row.rating),
+        price: SafeStr(row.price),
+        description: SafeStr(row.description),
+        hostTip: SafeStr(row.host_tip)
     }
+end function
+
+function SafeStr(value as Dynamic) as String
+    if value = invalid then return ""
+    if GetInterface(value, "ifString") <> invalid then return value
+    return value.ToStr()
 end function
 
 function MapSupabaseCheckoutTask(row as Object) as Object
@@ -185,7 +191,14 @@ function MapSupabaseDiscount(row as Object) as Object
         title: row.title,
         code: row.code,
         description: row.description,
-        bannerText: row.banner_text
+        bannerText: row.banner_text,
+        navLabel: row.nav_label,
+        pageTitle: row.page_title,
+        pageSubtitle: row.page_subtitle,
+        codeLabel: row.code_label,
+        websiteLabel: row.website_label,
+        websiteUrl: row.website_url,
+        footerText: row.footer_text
     }
 end function
 
@@ -193,6 +206,12 @@ function BuildWifiQrUri(ssid as String, password as String) as String
     wifiPayload = "WIFI:T:WPA;S:" + ssid + ";P:" + password + ";;"
     encodedPayload = UrlEncodeString(wifiPayload)
     return "https://api.qrserver.com/v1/create-qr-code/?size=360x360&qzone=1&data=" + encodedPayload
+end function
+
+function BuildMapsQrUri(address as String) as String
+    directionsUrl = "https://www.google.com/maps/dir/?api=1&destination=" + UrlEncodeString(address)
+    encodedPayload = UrlEncodeString(directionsUrl)
+    return "https://api.qrserver.com/v1/create-qr-code/?size=280x280&qzone=1&data=" + encodedPayload
 end function
 
 ' Manual percent-encoding avoids relying on roUrlTransfer's Escape() behavior across firmware versions

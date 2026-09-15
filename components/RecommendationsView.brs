@@ -3,9 +3,10 @@ sub init()
     m.recCategoryLabel = m.top.findNode("recCategoryLabel")
     m.recRatingLabel = m.top.findNode("recRatingLabel")
     m.recNameLabel = m.top.findNode("recNameLabel")
-    m.recDistanceLabel = m.top.findNode("recDistanceLabel")
+    m.recAddressLabel = m.top.findNode("recAddressLabel")
     m.recDescLabel = m.top.findNode("recDescLabel")
     m.recHostTipLabel = m.top.findNode("recHostTipLabel")
+    m.recQrPoster = m.top.findNode("recQrPoster")
 
     m.top.observeField("property", "loadRecommendationsData")
     loadRecommendationsData()
@@ -66,8 +67,14 @@ sub updateDetailView(index as Integer)
         m.recCategoryLabel.text = UCase(place.category)
         m.recRatingLabel.text = place.rating + " • " + place.price
         m.recNameLabel.text = place.name
-        m.recDistanceLabel.text = place.distance + " from cabin"
+        m.recAddressLabel.text = place.address
         m.recDescLabel.text = place.description
         m.recHostTipLabel.text = place.hostTip
+
+        if place.address <> ""
+            m.recQrPoster.uri = BuildMapsQrUri(place.address)
+        else
+            m.recQrPoster.uri = ""
+        end if
     end if
 end sub

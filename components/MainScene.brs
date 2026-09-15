@@ -53,20 +53,10 @@ sub init()
     m.hostPhoneLabel = m.top.findNode("hostPhoneLabel")
     m.emergencyLabel = m.top.findNode("emergencyLabel")
 
-    menuContent = CreateObject("roSGNode", "ContentNode")
-    items = [
-        "Welcome & Wi-Fi",
-        "House Rules & Spa",
-        "Local Recommendations",
-        "Weather Forecast",
-        "Departure Checklist",
-        "Returning Guest Perk"
-    ]
-    for each title in items
-        itemNode = menuContent.createChild("ContentNode")
-        itemNode.title = title
-    end for
-    m.navRail.content = menuContent
+    ' Returning Guest Perk item is only shown once an active discount is confirmed
+    m.hasActiveDiscount = false
+    m.activeDiscount = invalid
+    rebuildNavMenu()
 
     m.navRail.observeField("itemSelected", "onNavItemSelected")
     m.pinGateOverlay.observeField("isUnlocked", "onPinGateUnlocked")
@@ -76,6 +66,34 @@ sub init()
     m.staffLongPressTimer.observeField("fire", "onStaffLongPressTimerFire")
 
     loadAssignedProperty()
+end sub
+
+sub rebuildNavMenu()
+    menuContent = CreateObject("roSGNode", "ContentNode")
+    m.navItemKeys = ["welcome", "rules", "recs", "weather", "checkout"]
+    baseTitles = [
+        "Welcome & Wi-Fi",
+        "House Rules & Spa",
+        "Local Recommendations",
+        "Weather Forecast",
+        "Departure Checklist"
+    ]
+    for each title in baseTitles
+        itemNode = menuContent.createChild("ContentNode")
+        itemNode.title = title
+    end for
+
+    if m.hasActiveDiscount
+        navLabel = "Returning Guest Perks"
+        if m.activeDiscount <> invalid and m.activeDiscount.navLabel <> invalid and m.activeDiscount.navLabel <> ""
+            navLabel = m.activeDiscount.navLabel
+        end if
+        itemNode = menuContent.createChild("ContentNode")
+        itemNode.title = navLabel
+        m.navItemKeys.Push("perks")
+    end if
+
+    m.navRail.content = menuContent
 end sub
 
 sub loadAssignedProperty()
@@ -171,13 +189,14 @@ sub onPinGateUnlocked()
             m.houseRulesView.property = prop
             m.recommendationsView.property = prop
             m.checkoutView.property = prop
-            m.feedbackView.property = prop
             m.screensaverOverlay.cabinName = prop.name
             m.screensaverOverlay.guestName = prop.guestName
 
             ' Schedule event-driven timers for this reservation
             scheduleCheckoutCleanupTimer(prop)
             schedulePreCheckinFetchTimer(prop)
+
+            refreshActiveDiscount(prop)
         end if
 
         m.pinGateOverlay.visible = false
@@ -212,27 +231,67 @@ sub switchView(index as Integer)
     m.checkoutView.visible = false
     m.feedbackView.visible = false
 
-    if index = 0
+    if m.navItemKeys = invalid or index < 0 or index >= m.navItemKeys.Count() then return
+    key = m.navItemKeys[index]
+
+    if key = "welcome"
         m.welcomeView.visible = true
         m.navRail.setFocus(true)
-    else if index = 1
+    else if key = "rules"
         m.houseRulesView.visible = true
         rulesList = m.houseRulesView.findNode("rulesList")
         if rulesList <> invalid then rulesList.setFocus(true)
-    else if index = 2
+    else if key = "recs"
         m.recommendationsView.visible = true
         recList = m.recommendationsView.findNode("recList")
         if recList <> invalid then recList.setFocus(true)
-    else if index = 3
+    else if key = "weather"
         m.weatherView.visible = true
         m.navRail.setFocus(true)
-    else if index = 4
+    else if key = "checkout"
         m.checkoutView.visible = true
         tasksList = m.checkoutView.findNode("tasksList")
         if tasksList <> invalid then tasksList.setFocus(true)
-    else if index = 5
+    else if key = "perks"
         m.feedbackView.visible = true
         m.navRail.setFocus(true)
+    end if
+end sub
+
+' Fetches the current active discount and toggles the "Returning Guest Perks" menu item accordingly
+sub refreshActiveDiscount(prop as Object)
+    if not IsSupabaseConfigured()
+        applyDiscountResult(invalid)
+        return
+    end if
+
+    propId = ""
+    if prop <> invalid and prop.id <> invalid then propId = prop.id
+
+    m.discountTask = CreateObject("roSGNode", "SupabaseTask")
+    m.discountTask.requestType = "GET_ACTIVE_DISCOUNT"
+    m.discountTask.propertyId = propId
+    m.discountTask.observeField("state", "onDiscountTaskStateChanged")
+    m.discountTask.control = "RUN"
+end sub
+
+sub onDiscountTaskStateChanged()
+    if m.discountTask = invalid or m.discountTask.state <> "stop" then return
+    discount = invalid
+    if m.discountTask.responseSuccess and m.discountTask.responseArray <> invalid and m.discountTask.responseArray.Count() > 0
+        discount = MapSupabaseDiscount(m.discountTask.responseArray[0])
+    end if
+    applyDiscountResult(discount)
+end sub
+
+sub applyDiscountResult(discount as Object)
+    m.activeDiscount = discount
+    m.hasActiveDiscount = (discount <> invalid)
+    rebuildNavMenu()
+    m.feedbackView.discount = discount
+
+    if not m.hasActiveDiscount and m.feedbackView.visible
+        switchView(0)
     end if
 end sub
 

@@ -6,6 +6,8 @@ sub init()
     onGuestChanged()
     m.clockTimer = m.top.findNode("clockTimer")
     m.driftTimer = m.top.findNode("driftTimer")
+    m.driftAnimation = m.top.findNode("driftAnimation")
+    m.driftInterpolator = m.top.findNode("driftInterpolator")
     m.floatingCard = m.top.findNode("floatingCard")
 
     ' Get actual card dimensions from its rendered bounds after layout
@@ -65,6 +67,11 @@ end sub
 ' Organic wander: smooth curves with occasional direction shifts
 sub onDriftTimerFire()
     if not m.top.visible then return
+
+    ' Sync from the actual rendered position so we tween from where the card really is
+    startPos = m.floatingCard.translation
+    m.posX = startPos[0]
+    m.posY = startPos[1]
 
     ' Periodic gentle turn (creates arcs, not straight lines)
     m.turnTimer = m.turnTimer + 1
@@ -145,7 +152,9 @@ sub onDriftTimerFire()
         m.dirY = -Abs(m.dirY)  ' Ensure moving up
     end if
 
-    m.floatingCard.translation = [m.posX, m.posY]
+    ' Tween smoothly to the new point instead of snapping, so motion isn't stepped
+    m.driftInterpolator.keyValue = [startPos, [m.posX, m.posY]]
+    m.driftAnimation.control = "start"
 end sub
 
 sub updateClock()
