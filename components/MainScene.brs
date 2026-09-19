@@ -76,6 +76,34 @@ sub init()
     loadAssignedProperty()
 end sub
 
+sub rebuildNavMenu()
+    menuContent = CreateObject("roSGNode", "ContentNode")
+    m.navItemKeys = ["welcome", "rules", "recs", "weather", "checkout"]
+    baseTitles = [
+        "Welcome & Wi-Fi",
+        "House Rules & Spa",
+        "Local Recommendations",
+        "Weather Forecast",
+        "Departure Checklist"
+    ]
+    for each title in baseTitles
+        itemNode = menuContent.createChild("ContentNode")
+        itemNode.title = title
+    end for
+
+    if m.hasActiveDiscount
+        navLabel = "Returning Guest Perks"
+        if m.activeDiscount <> invalid and m.activeDiscount.navLabel <> invalid and m.activeDiscount.navLabel <> ""
+            navLabel = m.activeDiscount.navLabel
+        end if
+        itemNode = menuContent.createChild("ContentNode")
+        itemNode.title = navLabel
+        m.navItemKeys.Push("perks")
+    end if
+
+    m.navRail.content = menuContent
+end sub
+
 sub loadAssignedProperty()
     token = GetSavedDeviceToken()
     if token = "" then return
@@ -186,7 +214,6 @@ sub onPinGateUnlocked()
             m.houseRulesView.property = prop
             m.recommendationsView.property = prop
             m.checkoutView.property = prop
-            m.feedbackView.property = prop
             m.screensaverOverlay.cabinName = prop.name
             m.screensaverOverlay.guestName = prop.guestName
 
@@ -252,6 +279,43 @@ sub switchView(index as Integer)
     else if key = "feedback"
         m.feedbackView.visible = true
         m.navRail.setFocus(true)
+    end if
+end sub
+
+' Fetches the current active discount and toggles the "Returning Guest Perks" menu item accordingly
+sub refreshActiveDiscount(prop as Object)
+    if not IsSupabaseConfigured()
+        applyDiscountResult(invalid)
+        return
+    end if
+
+    propId = ""
+    if prop <> invalid and prop.id <> invalid then propId = prop.id
+
+    m.discountTask = CreateObject("roSGNode", "SupabaseTask")
+    m.discountTask.requestType = "GET_ACTIVE_DISCOUNT"
+    m.discountTask.propertyId = propId
+    m.discountTask.observeField("state", "onDiscountTaskStateChanged")
+    m.discountTask.control = "RUN"
+end sub
+
+sub onDiscountTaskStateChanged()
+    if m.discountTask = invalid or m.discountTask.state <> "stop" then return
+    discount = invalid
+    if m.discountTask.responseSuccess and m.discountTask.responseArray <> invalid and m.discountTask.responseArray.Count() > 0
+        discount = MapSupabaseDiscount(m.discountTask.responseArray[0])
+    end if
+    applyDiscountResult(discount)
+end sub
+
+sub applyDiscountResult(discount as Object)
+    m.activeDiscount = discount
+    m.hasActiveDiscount = (discount <> invalid)
+    rebuildNavMenu()
+    m.feedbackView.discount = discount
+
+    if not m.hasActiveDiscount and m.feedbackView.visible
+        switchView(0)
     end if
 end sub
 
@@ -549,6 +613,20 @@ sub onAmbientAudioSignStateChanged()
         m.ambientAudio.control = "play"
     end if
 end sub
+
+function buildAmbientAudioUrl() as String
+    deviceId = GetDeviceId()
+    deviceToken = GetSavedDeviceToken()
+    if deviceId = "" or deviceToken = ""
+        return ""
+    end if
+
+    baseUrl = GetSupabaseUrl()
+    if Right(baseUrl, 1) = "/"
+        baseUrl = Left(baseUrl, Len(baseUrl) - 1)
+    end if
+    return baseUrl + "/functions/v1/ambient-audio?device_id=" + UrlEncodeString(deviceId) + "&device_token=" + UrlEncodeString(deviceToken)
+end function
 
 sub stopAmbientAudio()
     if m.ambientAudio <> invalid

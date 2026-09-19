@@ -177,6 +177,12 @@ function MapSupabaseRecommendation(row as Object) as Object
     }
 end function
 
+function SafeStr(value as Dynamic) as String
+    if value = invalid then return ""
+    if GetInterface(value, "ifString") <> invalid then return value
+    return value.ToStr()
+end function
+
 function MapSupabaseCheckoutTask(row as Object) as Object
     if row = invalid then return invalid
     taskId = "task"

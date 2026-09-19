@@ -30,6 +30,10 @@ ALTER TABLE public.property_pin_attempts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.roku_devices ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.staff_authorizations ENABLE ROW LEVEL SECURITY;
 
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('channel-media', 'channel-media', FALSE)
+ON CONFLICT (id) DO UPDATE SET public = FALSE;
+
 -- Remove the legacy anonymous endpoints before granting the device-bound APIs.
 DROP FUNCTION IF EXISTS public.get_active_property_display(TEXT, BOOLEAN);
 DROP FUNCTION IF EXISTS public.verify_staff_company_pin(TEXT, TEXT);
@@ -123,7 +127,20 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION public.authorize_roku_media(p_device_id TEXT, p_device_token TEXT)
+RETURNS BOOLEAN
+LANGUAGE sql SECURITY DEFINER SET search_path = public, extensions AS $$
+    SELECT EXISTS (
+        SELECT 1
+        FROM roku_devices d
+        WHERE d.device_id = p_device_id
+          AND d.revoked_at IS NULL
+          AND extensions.crypt(p_device_token, d.credential_hash) = d.credential_hash
+    );
+$$;
+
 REVOKE ALL ON TABLE public.property_pin_attempts, public.roku_devices, public.staff_authorizations FROM PUBLIC;
-REVOKE ALL ON FUNCTION public.enroll_roku_device(TEXT, TEXT), public.get_active_property_display(TEXT, TEXT, TEXT), public.verify_staff_company_pin(TEXT, TEXT, TEXT) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.enroll_roku_device(TEXT, TEXT), public.get_active_property_display(TEXT, TEXT, TEXT), public.verify_staff_company_pin(TEXT, TEXT, TEXT), public.authorize_roku_media(TEXT, TEXT) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.enroll_roku_device(TEXT, TEXT), public.get_active_property_display(TEXT, TEXT, TEXT), public.verify_staff_company_pin(TEXT, TEXT, TEXT) TO anon;
+GRANT EXECUTE ON FUNCTION public.authorize_roku_media(TEXT, TEXT) TO service_role;
 NOTIFY pgrst, 'reload schema';

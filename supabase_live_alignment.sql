@@ -22,7 +22,7 @@ ALTER TABLE public.house_rules
 
 ALTER TABLE public.recommendations
     ADD COLUMN IF NOT EXISTS property_id TEXT REFERENCES public.properties(id) ON DELETE CASCADE,
-    ADD COLUMN IF NOT EXISTS distance TEXT,
+    ADD COLUMN IF NOT EXISTS address TEXT,
     ADD COLUMN IF NOT EXISTS rating TEXT,
     ADD COLUMN IF NOT EXISTS price TEXT,
     ADD COLUMN IF NOT EXISTS description TEXT,

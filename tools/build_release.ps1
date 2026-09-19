@@ -65,3 +65,4 @@ try {
 }
 
 Write-Output "Release package successfully created with POSIX forward slashes: $packagePath"
+

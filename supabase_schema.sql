@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS public.recommendations (
     property_id TEXT REFERENCES public.properties(id) ON DELETE CASCADE,
     name TEXT NOT NULL,
     category TEXT NOT NULL,
-    distance TEXT,
+    address TEXT,
     rating TEXT,
     price TEXT,
     description TEXT,
@@ -88,6 +88,13 @@ CREATE TABLE IF NOT EXISTS public.discounts (
     title TEXT,
     description TEXT,
     banner_text TEXT,
+    nav_label TEXT DEFAULT 'Returning Guest Perks',
+    page_title TEXT DEFAULT 'RETURNING GUEST PERK',
+    page_subtitle TEXT,
+    code_label TEXT DEFAULT 'Direct Booking Discount Code:',
+    website_label TEXT DEFAULT 'Visit our website:',
+    website_url TEXT,
+    footer_text TEXT,
     is_active BOOLEAN DEFAULT TRUE,
     sort_order INT DEFAULT 0,
     created_at TIMESTAMPTZ DEFAULT NOW()
@@ -198,14 +205,16 @@ VALUES
 (NULL, '100% Smoke-Free Interior', 'Health & Safety', 'Smoking and vaping permitted ONLY at the outdoor gravel fire pit.', 'No smoking, vaping, or incense inside the cabin or screened porches. Dispose of butts safely in the metal ashtray.', '$500 deep-cleaning and ozone restoration fee.', 5);
 
 -- Seed Recommendations
-INSERT INTO public.recommendations (property_id, name, category, distance, rating, price, description, host_tip, sort_order)
+-- NOTE: fill in the `address` value for each row below with the business's real
+-- street address before relying on the generated Google Maps QR codes.
+INSERT INTO public.recommendations (property_id, name, category, address, rating, price, description, host_tip, sort_order)
 VALUES
-(NULL, 'Friends Trail Loop', 'Hiking & Nature', '1.8 miles (4 min drive)', '4.9 / 5', 'Free', 'Scenic 1.5-mile loop along the Mountain Fork River rapids with rock outcroppings and crystal-clear swimming holes.', 'Start early before 9:30 AM to catch the morning river mist and avoid peak traffic. Sturdy hiking shoes recommended.', 1),
-(NULL, 'Grateful Head Pizza Oven & Tap Room', 'Dining & Drinks', '2.4 miles (5 min drive)', '4.8 / 5', '$$', 'Artisan wood-fired pizzas with a lively rustic beer garden under string lights in Hochatown.', 'Try the "Tree Hugger" or "Dire Wolf" specialty pies. Arrive early on weekends!', 2),
-(NULL, 'Beavers Bend Marina & Boat Rentals', 'Lake & Marina', '5.2 miles (10 min drive)', '4.7 / 5', '$$$', 'Luxury tritoon pontoon rentals, double-decker slide boats, jet skis, and paddleboards on Broken Bow Lake.', 'Book pontoon boats at least 48 hours in advance for sunset cruises. Free parking with boat reservation.', 3),
-(NULL, 'Mountain Fork Brewery', 'Breweries & Wineries', '2.9 miles (6 min drive)', '4.8 / 5', '$$', 'Family-friendly craft brewery brewed with Ouachita mountain spring water. Great flatbreads and giant lawn games.', 'Host favorite: Sneaky Snake Belgian Ale and Loaded Elk Jalapeño Popper Dip. Live music on Fridays.', 4),
-(NULL, 'Cedar Creek Golf Course', 'Family Fun & Sports', '6.1 miles (12 min drive)', '4.6 / 5', '$$$', 'Pristine 18-hole championship course nestled along Broken Bow Lake with towering pine fairways.', 'Call ahead for morning tee times. Driving range offers spectacular mountain lake vistas.', 5),
-(NULL, 'Girls Gone Wine', 'Breweries & Wineries', '2.2 miles (5 min drive)', '4.9 / 5', '$$', 'Boutique winery tasting room and sassy gift shop with complimentary tastings in the heart of Hochatown.', 'Fun, upbeat vibe. Great place to pick up a chilled bottle of local wine for evening hot tub soaks.', 6);
+(NULL, 'Friends Trail Loop', 'Hiking & Nature', '', '4.9 / 5', 'Free', 'Scenic 1.5-mile loop along the Mountain Fork River rapids with rock outcroppings and crystal-clear swimming holes.', 'Start early before 9:30 AM to catch the morning river mist and avoid peak traffic. Sturdy hiking shoes recommended.', 1),
+(NULL, 'Grateful Head Pizza Oven & Tap Room', 'Dining & Drinks', '', '4.8 / 5', '$$', 'Artisan wood-fired pizzas with a lively rustic beer garden under string lights in Hochatown.', 'Try the "Tree Hugger" or "Dire Wolf" specialty pies. Arrive early on weekends!', 2),
+(NULL, 'Beavers Bend Marina & Boat Rentals', 'Lake & Marina', '', '4.7 / 5', '$$$', 'Luxury tritoon pontoon rentals, double-decker slide boats, jet skis, and paddleboards on Broken Bow Lake.', 'Book pontoon boats at least 48 hours in advance for sunset cruises. Free parking with boat reservation.', 3),
+(NULL, 'Mountain Fork Brewery', 'Breweries & Wineries', '', '4.8 / 5', '$$', 'Family-friendly craft brewery brewed with Ouachita mountain spring water. Great flatbreads and giant lawn games.', 'Host favorite: Sneaky Snake Belgian Ale and Loaded Elk Jalapeño Popper Dip. Live music on Fridays.', 4),
+(NULL, 'Cedar Creek Golf Course', 'Family Fun & Sports', '', '4.6 / 5', '$$$', 'Pristine 18-hole championship course nestled along Broken Bow Lake with towering pine fairways.', 'Call ahead for morning tee times. Driving range offers spectacular mountain lake vistas.', 5),
+(NULL, 'Girls Gone Wine', 'Breweries & Wineries', '', '4.9 / 5', '$$', 'Boutique winery tasting room and sassy gift shop with complimentary tastings in the heart of Hochatown.', 'Fun, upbeat vibe. Great place to pick up a chilled bottle of local wine for evening hot tub soaks.', 6);
 
 -- Seed Checkout Tasks
 INSERT INTO public.checkout_tasks (property_id, task_key, title, time_estimate, is_required, sort_order)
@@ -217,8 +226,8 @@ VALUES
 (NULL, 'task5', 'Lock All Sliding Patio Doors & Windows', '3 min', TRUE, 5),
 (NULL, 'task6', 'Place Used Towels in Bathtub', '2 min', FALSE, 6);
 
--- Seed Returning Guest Discount (set is_active = FALSE to hide the promo panel on the TV app)
-INSERT INTO public.discounts (property_id, code, title, description, banner_text, is_active, sort_order)
+-- Seed Returning Guest Discount (set is_active = FALSE to hide the promo panel and menu item on the TV app)
+INSERT INTO public.discounts (property_id, code, title, description, banner_text, nav_label, page_title, page_subtitle, code_label, website_label, website_url, footer_text, is_active, sort_order)
 VALUES
-(NULL, 'PINESVIP15', 'RETURNING GUEST VIP PERK', 'Enjoy 15% off your next getaway when booking directly with your host!', 'Book your next stay now and claim the 15% direct booking discount!', TRUE, 1);
+(NULL, 'PINESVIP15', 'RETURNING GUEST VIP PERK', 'Enjoy 15% off your next getaway when booking directly with your host!', 'Book your next stay now and claim the 15% direct booking discount!', 'Returning Guest Perks', 'RETURNING GUEST PERK', 'Enjoy an exclusive direct-booking discount on your next getaway.', 'Direct Booking Discount Code:', 'Visit our website:', 'https://brokenbowvacationcabins.com', 'Thanks again for choosing Broken Bow Vacation Cabins!', TRUE, 1);
 

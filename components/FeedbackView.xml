@@ -25,10 +25,10 @@
             
             <Group>
               <Rectangle width="1304" height="76" color="0x0F5132FF" />
-              <Label id="discountCodeLabel" text="PINESVIP15" font="font:LargeBoldSystemFont" color="0x34D399FF" horizAlign="center" vertAlign="center" width="1304" height="76" />
+              <Label id="discountCodeLabel" text="" font="font:LargeBoldSystemFont" color="0x34D399FF" horizAlign="center" vertAlign="center" width="1304" height="76" />
             </Group>
             
-            <Label id="discountDescLabel" text="Enjoy 15% off your next getaway when booking directly with your host!" font="font:SmallSystemFont" color="0x88AAAAFF" wrap="true" width="1304" horizAlign="center" />
+            <Label id="discountDescLabel" text="" font="font:SmallSystemFont" color="0x88AAAAFF" wrap="true" width="1304" horizAlign="center" />
 
             <Group>
               <Rectangle width="1304" height="172" color="0x0A1410CC" />

@@ -3,6 +3,7 @@ sub init()
     m.pageTitleLabel = m.top.findNode("pageTitleLabel")
     m.pageSubtitleLabel = m.top.findNode("pageSubtitleLabel")
     m.discountTitleLabel = m.top.findNode("discountTitleLabel")
+    m.discountCodeLabelLabel = m.top.findNode("discountCodeLabelLabel")
     m.discountCodeLabel = m.top.findNode("discountCodeLabel")
     m.discountDescLabel = m.top.findNode("discountDescLabel")
     m.discountBannerLabel = m.top.findNode("discountBannerLabel")
@@ -28,6 +29,7 @@ sub applyDiscount(discount as Object)
     if discount.pageTitle <> invalid and discount.pageTitle <> "" then m.pageTitleLabel.text = discount.pageTitle
     if discount.pageSubtitle <> invalid and discount.pageSubtitle <> "" then m.pageSubtitleLabel.text = discount.pageSubtitle
     if discount.title <> invalid and discount.title <> "" then m.discountTitleLabel.text = discount.title
+    if discount.codeLabel <> invalid and discount.codeLabel <> "" then m.discountCodeLabelLabel.text = discount.codeLabel
     if discount.code <> invalid and discount.code <> "" then m.discountCodeLabel.text = discount.code
     if discount.description <> invalid and discount.description <> "" then m.discountDescLabel.text = discount.description
     if discount.bannerText <> invalid and discount.bannerText <> "" then m.discountBannerLabel.text = discount.bannerText
