@@ -28,14 +28,17 @@ end sub
 
 sub loadCheckoutTasks()
     if IsSupabaseConfigured()
-        propId = ""
-        if m.top.property <> invalid and m.top.property.id <> invalid
-            propId = m.top.property.id
+        token = GetSavedDeviceToken()
+        if token = ""
+            m.tasksData = []
+            refreshTaskList()
+            return
         end if
 
         m.task = CreateObject("roSGNode", "SupabaseTask")
         m.task.requestType = "GET_CHECKOUT_TASKS"
-        m.task.propertyId = propId
+        m.task.deviceId = GetDeviceId()
+        m.task.deviceToken = token
         m.task.observeField("state", "onCheckoutTasksStateChanged")
         m.task.control = "RUN"
     else

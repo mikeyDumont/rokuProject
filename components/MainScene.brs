@@ -8,10 +8,6 @@ sub init()
         m.staffMenu.observeField("staffAction", "onStaffMenuAction")
     end if
     if m.ambientAudio <> invalid
-        ambientContent = CreateObject("roSGNode", "ContentNode")
-        ambientContent.url = "pkg:/audio/forest_ambience.mp3"
-        ambientContent.streamFormat = "mp3"
-        m.ambientAudio.content = ambientContent
         m.ambientAudio.observeField("state", "onAmbientAudioStateChanged")
     end if
     m.inactivityTimer = m.top.findNode("inactivityTimer")
@@ -55,17 +51,18 @@ sub init()
     m.emergencyLabel = m.top.findNode("emergencyLabel")
 
     menuContent = CreateObject("roSGNode", "ContentNode")
-    items = [
-        "Welcome & Wi-Fi",
-        "House Rules & Spa",
-        "Local Recommendations",
-        "Weather Forecast",
-        "Departure Checklist",
-        "Returning Guest Perk"
+    m.navBaseItems = [
+        {title: "Welcome & Wi-Fi", key: "welcome"},
+        {title: "House Rules & Spa", key: "houserules"},
+        {title: "Local Recommendations", key: "recommendations"},
+        {title: "Weather Forecast", key: "weather"},
+        {title: "Departure Checklist", key: "checkout"}
     ]
-    for each title in items
+    m.navViewKeys = []
+    for each item in m.navBaseItems
         itemNode = menuContent.createChild("ContentNode")
-        itemNode.title = title
+        itemNode.title = item.title
+        m.navViewKeys.Push(item.key)
     end for
     m.navRail.content = menuContent
 
@@ -118,9 +115,26 @@ sub onDeepLinkPinChanged()
     pin = m.top.deepLinkPin
     if pin <> "" and Len(pin) = 4
         if IsSupabaseConfigured()
+            m.deepLinkEnrollTask = CreateObject("roSGNode", "SupabaseTask")
+            m.deepLinkEnrollTask.requestType = "ENROLL_DEVICE"
+            m.deepLinkEnrollTask.pin = pin
+            m.deepLinkEnrollTask.deviceId = GetDeviceId()
+            m.deepLinkEnrollTask.observeField("state", "onDeepLinkEnrollStateChanged")
+            m.deepLinkEnrollTask.control = "RUN"
+        end if
+    end if
+end sub
+
+sub onDeepLinkEnrollStateChanged()
+    if m.deepLinkEnrollTask = invalid or m.deepLinkEnrollTask.state <> "stop" then return
+    if m.deepLinkEnrollTask.responseSuccess and m.deepLinkEnrollTask.responseJson <> invalid and m.deepLinkEnrollTask.responseJson.approved = true
+        deviceToken = m.deepLinkEnrollTask.responseJson.device_token
+        if deviceToken <> invalid and deviceToken <> ""
+            SaveDeviceToken(deviceToken)
             m.deepLinkTask = CreateObject("roSGNode", "SupabaseTask")
             m.deepLinkTask.requestType = "GET_PROPERTY_BY_PIN"
-            m.deepLinkTask.pin = pin
+            m.deepLinkTask.deviceId = GetDeviceId()
+            m.deepLinkTask.deviceToken = deviceToken
             m.deepLinkTask.observeField("state", "onDeepLinkSupabaseTaskStateChanged")
             m.deepLinkTask.control = "RUN"
         end if
@@ -179,6 +193,7 @@ sub onPinGateUnlocked()
             ' Schedule event-driven timers for this reservation
             scheduleCheckoutCleanupTimer(prop)
             schedulePreCheckinFetchTimer(prop)
+            loadActiveDiscount()
         end if
 
         m.pinGateOverlay.visible = false
@@ -213,25 +228,28 @@ sub switchView(index as Integer)
     m.checkoutView.visible = false
     m.feedbackView.visible = false
 
-    if index = 0
+    if m.navViewKeys = invalid or index < 0 or index >= m.navViewKeys.Count() then return
+    key = m.navViewKeys[index]
+
+    if key = "welcome"
         m.welcomeView.visible = true
         m.navRail.setFocus(true)
-    else if index = 1
+    else if key = "houserules"
         m.houseRulesView.visible = true
         rulesList = m.houseRulesView.findNode("rulesList")
         if rulesList <> invalid then rulesList.setFocus(true)
-    else if index = 2
+    else if key = "recommendations"
         m.recommendationsView.visible = true
         recList = m.recommendationsView.findNode("recList")
         if recList <> invalid then recList.setFocus(true)
-    else if index = 3
+    else if key = "weather"
         m.weatherView.visible = true
         m.navRail.setFocus(true)
-    else if index = 4
+    else if key = "checkout"
         m.checkoutView.visible = true
         tasksList = m.checkoutView.findNode("tasksList")
         if tasksList <> invalid then tasksList.setFocus(true)
-    else if index = 5
+    else if key = "feedback"
         m.feedbackView.visible = true
         m.navRail.setFocus(true)
     end if
@@ -240,6 +258,53 @@ end sub
 sub resetInactivityTimer()
     m.inactivityTimer.control = "stop"
     m.inactivityTimer.control = "start"
+end sub
+
+sub loadActiveDiscount()
+    if not IsSupabaseConfigured() then return
+    token = GetSavedDeviceToken()
+    if token = "" then return
+
+    m.activeDiscountTask = CreateObject("roSGNode", "SupabaseTask")
+    m.activeDiscountTask.requestType = "GET_ACTIVE_DISCOUNT"
+    m.activeDiscountTask.deviceId = GetDeviceId()
+    m.activeDiscountTask.deviceToken = token
+    m.activeDiscountTask.observeField("state", "onActiveDiscountStateChanged")
+    m.activeDiscountTask.control = "RUN"
+end sub
+
+sub onActiveDiscountStateChanged()
+    if m.activeDiscountTask = invalid or m.activeDiscountTask.state <> "stop" then return
+
+    discount = invalid
+    if m.activeDiscountTask.responseSuccess and m.activeDiscountTask.responseArray <> invalid and m.activeDiscountTask.responseArray.Count() > 0
+        discount = MapSupabaseDiscount(m.activeDiscountTask.responseArray[0])
+    end if
+
+    m.feedbackView.discountData = discount
+
+    perkLabel = "Returning Guest Perk"
+    if discount <> invalid and discount.navLabel <> invalid and discount.navLabel <> "" then perkLabel = discount.navLabel
+    rebuildNavRail(discount <> invalid, perkLabel)
+end sub
+
+' Only show the Returning Guest Perk tab when an active discount exists for this org/property
+sub rebuildNavRail(showPerk as Boolean, perkLabel as String)
+    menuContent = CreateObject("roSGNode", "ContentNode")
+    m.navViewKeys = []
+    for each item in m.navBaseItems
+        itemNode = menuContent.createChild("ContentNode")
+        itemNode.title = item.title
+        m.navViewKeys.Push(item.key)
+    end for
+
+    if showPerk
+        perkNode = menuContent.createChild("ContentNode")
+        perkNode.title = perkLabel
+        m.navViewKeys.Push("feedback")
+    end if
+
+    m.navRail.content = menuContent
 end sub
 
 sub onInactivityTimerFire()
@@ -457,7 +522,30 @@ sub onStaffMenuAction()
 end sub
 
 sub playAmbientAudio()
-    if m.ambientAudio <> invalid
+    if m.ambientAudio = invalid then return
+    if not IsSupabaseConfigured() then return
+
+    ' A fresh short-lived signed URL is fetched before each loop start instead of
+    ' bundling the mp3 in the package (keeps the sideload package under the size limit).
+    m.ambientAudioSignTask = CreateObject("roSGNode", "SupabaseTask")
+    m.ambientAudioSignTask.requestType = "GET_SIGNED_AMBIENT_AUDIO_URL"
+    m.ambientAudioSignTask.useStorageApi = true
+    m.ambientAudioSignTask.endpoint = "object/sign/channel-media/ambient/forest_ambience-v1.mp3"
+    m.ambientAudioSignTask.postBody = "{" + Chr(34) + "expiresIn" + Chr(34) + ":3600}"
+    m.ambientAudioSignTask.observeField("state", "onAmbientAudioSignStateChanged")
+    m.ambientAudioSignTask.control = "RUN"
+end sub
+
+sub onAmbientAudioSignStateChanged()
+    if m.ambientAudioSignTask = invalid or m.ambientAudioSignTask.state <> "stop" then return
+    if m.ambientAudioSignTask.responseSuccess and m.ambientAudioSignTask.responseJson <> invalid and m.ambientAudioSignTask.responseJson.signedURL <> invalid
+        baseUrl = GetSupabaseUrl()
+        if Right(baseUrl, 1) = "/" then baseUrl = Left(baseUrl, Len(baseUrl) - 1)
+
+        ambientContent = CreateObject("roSGNode", "ContentNode")
+        ambientContent.url = baseUrl + "/storage/v1" + m.ambientAudioSignTask.responseJson.signedURL
+        ambientContent.streamFormat = "mp3"
+        m.ambientAudio.content = ambientContent
         m.ambientAudio.control = "play"
     end if
 end sub
@@ -471,7 +559,7 @@ end sub
 sub onAmbientAudioStateChanged()
     if m.ambientAudio <> invalid and m.ambientAudio.state = "finished"
         if m.pinGateOverlay <> invalid and not m.pinGateOverlay.visible
-            m.ambientAudio.control = "play"
+            playAmbientAudio()
         end if
     end if
 end sub

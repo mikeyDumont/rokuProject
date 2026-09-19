@@ -62,6 +62,9 @@ function MapSupabasePropertyToProfile(row as Object) as Object
     idVal = ""
     if row.id <> invalid then idVal = row.id.ToStr()
 
+    orgIdVal = ""
+    if row.org_id <> invalid then orgIdVal = row.org_id.ToStr()
+
     pinVal = ""
     if row.pin <> invalid then pinVal = row.pin.ToStr()
 
@@ -118,6 +121,7 @@ function MapSupabasePropertyToProfile(row as Object) as Object
 
     return {
         id: idVal,
+        orgId: orgIdVal,
         pin: pinVal,
         name: nameVal,
         tagline: taglineVal,
@@ -152,12 +156,22 @@ end function
 
 function MapSupabaseRecommendation(row as Object) as Object
     if row = invalid then return invalid
+
+    addressVal = ""
+    if row.address <> invalid then addressVal = row.address
+
+    imageUrlVal = ""
+    if row.image_url <> invalid then imageUrlVal = row.image_url
+
+    isSponsoredVal = false
+    if row.is_sponsored <> invalid then isSponsoredVal = row.is_sponsored
+
     return {
         name: row.name,
         category: row.category,
-        distance: row.distance,
-        rating: row.rating,
-        price: row.price,
+        address: addressVal,
+        imageUrl: imageUrlVal,
+        isSponsored: isSponsoredVal,
         description: row.description,
         hostTip: row.host_tip
     }
@@ -181,17 +195,50 @@ end function
 
 function MapSupabaseDiscount(row as Object) as Object
     if row = invalid then return invalid
+
+    codeLabelVal = "Direct Booking Discount Code:"
+    if row.code_label <> invalid and row.code_label <> "" then codeLabelVal = row.code_label
+
+    websiteLabelVal = "Visit our website:"
+    if row.website_label <> invalid and row.website_label <> "" then websiteLabelVal = row.website_label
+
+    websiteUrlVal = ""
+    if row.website_url <> invalid then websiteUrlVal = row.website_url
+
+    footerTextVal = ""
+    if row.footer_text <> invalid then footerTextVal = row.footer_text
+
+    pageSubtitleVal = ""
+    if row.page_subtitle <> invalid then pageSubtitleVal = row.page_subtitle
+
+    navLabelVal = ""
+    if row.nav_label <> invalid then navLabelVal = row.nav_label
+
     return {
         title: row.title,
         code: row.code,
         description: row.description,
-        bannerText: row.banner_text
+        bannerText: row.banner_text,
+        navLabel: navLabelVal,
+        pageTitle: row.page_title,
+        pageSubtitle: pageSubtitleVal,
+        codeLabel: codeLabelVal,
+        websiteLabel: websiteLabelVal,
+        websiteUrl: websiteUrlVal,
+        footerText: footerTextVal
     }
 end function
 
 function BuildWifiQrUri(ssid as String, password as String) as String
     wifiPayload = "WIFI:T:WPA;S:" + ssid + ";P:" + password + ";;"
     encodedPayload = UrlEncodeString(wifiPayload)
+    return "https://api.qrserver.com/v1/create-qr-code/?size=360x360&qzone=1&data=" + encodedPayload
+end function
+
+' QR code linking to Google Maps turn-by-turn directions for a recommendation's address
+function BuildMapsQrUri(address as String) as String
+    mapsUrl = "https://www.google.com/maps/dir/?api=1&destination=" + UrlEncodeString(address)
+    encodedPayload = UrlEncodeString(mapsUrl)
     return "https://api.qrserver.com/v1/create-qr-code/?size=360x360&qzone=1&data=" + encodedPayload
 end function
 

@@ -9,7 +9,7 @@
         <field id="endpoint" type="string" />
         <field id="queryFilter" type="string" />
         <field id="postBody" type="string" />
-        <field id="propertyId" type="string" />
+        <field id="useStorageApi" type="boolean" value="false" />
         <field id="pin" type="string" />
         <field id="companyPin" type="string" />
         <field id="deviceId" type="string" />

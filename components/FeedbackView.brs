@@ -1,39 +1,22 @@
 sub init()
     m.discountSection = m.top.findNode("discountSection")
+    m.pageTitleLabel = m.top.findNode("pageTitleLabel")
+    m.pageSubtitleLabel = m.top.findNode("pageSubtitleLabel")
     m.discountTitleLabel = m.top.findNode("discountTitleLabel")
     m.discountCodeLabel = m.top.findNode("discountCodeLabel")
     m.discountDescLabel = m.top.findNode("discountDescLabel")
     m.discountBannerLabel = m.top.findNode("discountBannerLabel")
+    m.codeLabelText = m.top.findNode("codeLabelText")
+    m.websiteLabelText = m.top.findNode("websiteLabelText")
+    m.websiteUrlLabel = m.top.findNode("websiteUrlLabel")
+    m.footerTextLabel = m.top.findNode("footerTextLabel")
 
-    m.top.observeField("property", "loadDiscountData")
-    loadDiscountData()
+    m.top.observeField("discountData", "onDiscountDataChanged")
+    applyDiscount(m.top.discountData)
 end sub
 
-sub loadDiscountData()
-    if IsSupabaseConfigured()
-        propId = ""
-        if m.top.property <> invalid and m.top.property.id <> invalid
-            propId = m.top.property.id
-        end if
-
-        m.discountTask = CreateObject("roSGNode", "SupabaseTask")
-        m.discountTask.requestType = "GET_ACTIVE_DISCOUNT"
-        m.discountTask.propertyId = propId
-        m.discountTask.observeField("state", "onDiscountTaskStateChanged")
-        m.discountTask.control = "RUN"
-    else
-        applyDiscount(invalid)
-    end if
-end sub
-
-sub onDiscountTaskStateChanged()
-    if m.discountTask <> invalid and m.discountTask.state = "stop"
-        discount = invalid
-        if m.discountTask.responseSuccess and m.discountTask.responseArray <> invalid and m.discountTask.responseArray.Count() > 0
-            discount = MapSupabaseDiscount(m.discountTask.responseArray[0])
-        end if
-        applyDiscount(discount)
-    end if
+sub onDiscountDataChanged()
+    applyDiscount(m.top.discountData)
 end sub
 
 sub applyDiscount(discount as Object)
@@ -42,10 +25,16 @@ sub applyDiscount(discount as Object)
         return
     end if
 
+    if discount.pageTitle <> invalid and discount.pageTitle <> "" then m.pageTitleLabel.text = discount.pageTitle
+    if discount.pageSubtitle <> invalid and discount.pageSubtitle <> "" then m.pageSubtitleLabel.text = discount.pageSubtitle
     if discount.title <> invalid and discount.title <> "" then m.discountTitleLabel.text = discount.title
     if discount.code <> invalid and discount.code <> "" then m.discountCodeLabel.text = discount.code
     if discount.description <> invalid and discount.description <> "" then m.discountDescLabel.text = discount.description
     if discount.bannerText <> invalid and discount.bannerText <> "" then m.discountBannerLabel.text = discount.bannerText
+    if discount.codeLabel <> invalid and discount.codeLabel <> "" then m.codeLabelText.text = discount.codeLabel
+    if discount.websiteLabel <> invalid and discount.websiteLabel <> "" then m.websiteLabelText.text = discount.websiteLabel
+    if discount.websiteUrl <> invalid then m.websiteUrlLabel.text = discount.websiteUrl
+    if discount.footerText <> invalid then m.footerTextLabel.text = discount.footerText
 
     m.discountSection.visible = true
 end sub

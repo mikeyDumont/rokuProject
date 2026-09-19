@@ -12,14 +12,17 @@ end sub
 
 sub loadRulesData()
     if IsSupabaseConfigured()
-        propId = ""
-        if m.top.property <> invalid and m.top.property.id <> invalid
-            propId = m.top.property.id
+        token = GetSavedDeviceToken()
+        if token = ""
+            m.rulesData = []
+            populateRulesList()
+            return
         end if
 
         m.task = CreateObject("roSGNode", "SupabaseTask")
         m.task.requestType = "GET_HOUSE_RULES"
-        m.task.propertyId = propId
+        m.task.deviceId = GetDeviceId()
+        m.task.deviceToken = token
         m.task.observeField("state", "onRulesTaskStateChanged")
         m.task.control = "RUN"
     else

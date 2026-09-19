@@ -18,23 +18,23 @@
       <LayoutGroup layoutDirection="horiz" itemSpacings="[28]">
         <LabelList id="recList" itemSize="[460, 64]" itemSpacing="[0, 8]" focusedColor="0x000000FF" color="0xEEEEEEFF" drawFocusFeedback="true" />
         <Group>
-          <Rectangle width="880" height="560" color="0x122019EE" />
-          <LayoutGroup translation="[32, 32]" layoutDirection="vert" itemSpacings="[12, 14, 16, 18, 20]">
-            <LayoutGroup layoutDirection="horiz" itemSpacings="[24]">
-              <Label id="recCategoryLabel" text="HIKING &amp; NATURE" font="font:SmallestBoldSystemFont" color="0x34D399FF" width="400" />
-              <Label id="recRatingLabel" text="4.9 / 5 - Free" font="font:SmallestBoldSystemFont" color="0xFBBF24FF" width="380" />
-            </LayoutGroup>
-            <Label id="recNameLabel" text="Friends Trail Loop" font="font:MediumBoldSystemFont" color="0xFFFFFFFF" width="816" />
-            <Label id="recDistanceLabel" text="1.8 miles • 4 min drive from cabin" font="font:SmallBoldSystemFont" color="0x60A5FAFF" width="816" />
-            <Label id="recDescLabel" text="Scenic 1.5-mile loop along the Mountain Fork River rapids." font="font:SmallSystemFont" color="0xCCCCCCFF" wrap="true" width="816" />
-            <Group>
-              <Rectangle width="816" height="140" color="0x0A1410CC" />
-              <LayoutGroup translation="[20, 16]" layoutDirection="vert" itemSpacings="[6]">
-                <Label text="HOST INSIDER TIP:" font="font:SmallestBoldSystemFont" color="0xFBBF24FF" width="776" />
-                <Label id="recHostTipLabel" text="Start early before 9:30 AM to catch the morning river mist." font="font:SmallSystemFont" color="0xEEEEEEFF" wrap="true" width="776" />
-              </LayoutGroup>
-            </Group>
+          <Rectangle width="880" height="620" color="0x122019FF" />
+          <!-- clippingRect crops the scaleToZoom overflow to the card bounds -->
+          <Poster id="recImagePoster" width="880" height="620" loadDisplayMode="scaleToZoom" clippingRect="[0, 0, 880, 620]" visible="false" />
+          <!-- Scrims keep label text legible over arbitrary photos -->
+          <Rectangle width="880" height="620" color="0x08120CA6" />
+          <Rectangle translation="[0, 404]" width="880" height="216" color="0x08120CF2" />
+
+          <Label id="recCategoryLabel" translation="[32, 28]" text="HIKING &amp; NATURE" font="font:SmallestBoldSystemFont" color="0x34D399FF" width="400" />
+          <Label id="recRatingLabel" translation="[452, 28]" text="" font="font:SmallestBoldSystemFont" color="0xFBBF24FF" width="200" />
+          <LayoutGroup id="recMapsQrGroup" translation="[698, 24]" layoutDirection="vert" itemSpacings="[6]" visible="false">
+            <Poster id="recMapsQrPoster" width="150" height="150" loadDisplayMode="scaleToFit" />
+            <Label text="Get Directions" font="font:SmallestBoldSystemFont" color="0xDDDDDDFF" width="150" horizAlign="center" />
           </LayoutGroup>
+
+          <Label id="recNameLabel" translation="[32, 426]" text="Friends Trail Loop" font="font:LargeBoldSystemFont" color="0xFFFFFFFF" width="816" />
+          <Label id="recDistanceLabel" translation="[32, 484]" text="" font="font:SmallBoldSystemFont" color="0x60A5FAFF" width="816" />
+          <Label id="recDescLabel" translation="[32, 520]" text="Scenic 1.5-mile loop along the Mountain Fork River rapids." font="font:SmallSystemFont" color="0xCCCCCCFF" wrap="true" maxLines="2" width="816" />
         </Group>
       </LayoutGroup>
     </LayoutGroup>

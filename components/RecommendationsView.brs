@@ -5,7 +5,9 @@ sub init()
     m.recNameLabel = m.top.findNode("recNameLabel")
     m.recDistanceLabel = m.top.findNode("recDistanceLabel")
     m.recDescLabel = m.top.findNode("recDescLabel")
-    m.recHostTipLabel = m.top.findNode("recHostTipLabel")
+    m.recImagePoster = m.top.findNode("recImagePoster")
+    m.recMapsQrGroup = m.top.findNode("recMapsQrGroup")
+    m.recMapsQrPoster = m.top.findNode("recMapsQrPoster")
 
     m.top.observeField("property", "loadRecommendationsData")
     loadRecommendationsData()
@@ -13,14 +15,17 @@ end sub
 
 sub loadRecommendationsData()
     if IsSupabaseConfigured()
-        propId = ""
-        if m.top.property <> invalid and m.top.property.id <> invalid
-            propId = m.top.property.id
+        token = GetSavedDeviceToken()
+        if token = ""
+            m.places = []
+            populateRecList()
+            return
         end if
 
         m.task = CreateObject("roSGNode", "SupabaseTask")
         m.task.requestType = "GET_RECOMMENDATIONS"
-        m.task.propertyId = propId
+        m.task.deviceId = GetDeviceId()
+        m.task.deviceToken = token
         m.task.observeField("state", "onRecsTaskStateChanged")
         m.task.control = "RUN"
     else
@@ -64,10 +69,29 @@ sub updateDetailView(index as Integer)
     if m.places <> invalid and index >= 0 and index < m.places.Count()
         place = m.places[index]
         m.recCategoryLabel.text = UCase(place.category)
-        m.recRatingLabel.text = place.rating + " • " + place.price
+        if place.isSponsored
+            m.recRatingLabel.text = "SPONSORED"
+        else
+            m.recRatingLabel.text = ""
+        end if
         m.recNameLabel.text = place.name
-        m.recDistanceLabel.text = place.distance + " from cabin"
+        m.recDistanceLabel.text = place.address
         m.recDescLabel.text = place.description
-        m.recHostTipLabel.text = place.hostTip
+        if m.recImagePoster <> invalid
+            if place.imageUrl <> ""
+                m.recImagePoster.uri = place.imageUrl
+                m.recImagePoster.visible = true
+            else
+                m.recImagePoster.visible = false
+            end if
+        end if
+        if m.recMapsQrGroup <> invalid and m.recMapsQrPoster <> invalid
+            if place.address <> ""
+                m.recMapsQrPoster.uri = BuildMapsQrUri(place.address)
+                m.recMapsQrGroup.visible = true
+            else
+                m.recMapsQrGroup.visible = false
+            end if
+        end if
     end if
 end sub

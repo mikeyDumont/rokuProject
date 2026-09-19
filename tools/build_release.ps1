@@ -17,8 +17,7 @@ $requiredEntries = @(
     "manifest",
     "source",
     "components",
-    "images",
-    "audio"
+    "images"
 )
 
 foreach ($entry in $requiredEntries) {

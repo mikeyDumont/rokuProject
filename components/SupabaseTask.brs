@@ -24,19 +24,21 @@ sub executeTask()
         else if reqType = "VERIFY_STAFF_PIN"
             endpoint = "rpc/verify_staff_company_pin"
         else if reqType = "GET_HOUSE_RULES"
-            endpoint = "house_rules"
+            endpoint = "rpc/get_house_rules"
         else if reqType = "GET_RECOMMENDATIONS"
-            endpoint = "recommendations"
+            endpoint = "rpc/get_recommendations"
         else if reqType = "GET_CHECKOUT_TASKS"
-            endpoint = "checkout_tasks"
+            endpoint = "rpc/get_checkout_tasks"
         else if reqType = "GET_ACTIVE_DISCOUNT"
-            endpoint = "discounts"
+            endpoint = "rpc/get_active_discount"
         else if reqType = "POST_FEEDBACK"
             endpoint = "guest_feedback"
         end if
     end if
 
-    fullUrl = baseUrl + "/rest/v1/" + endpoint
+    apiPrefix = "/rest/v1/"
+    if m.top.useStorageApi then apiPrefix = "/storage/v1/"
+    fullUrl = baseUrl + apiPrefix + endpoint
     queryFilter = m.top.queryFilter
 
     if queryFilter = ""
@@ -50,30 +52,9 @@ sub executeTask()
         else if reqType = "VERIFY_STAFF_PIN" and m.top.deviceId <> "" and m.top.deviceToken <> "" and m.top.companyPin <> ""
             quote = Chr(34)
             m.top.postBody = "{" + quote + "p_device_id" + quote + ":" + quote + m.top.deviceId + quote + "," + quote + "p_device_token" + quote + ":" + quote + m.top.deviceToken + quote + "," + quote + "p_company_pin" + quote + ":" + quote + m.top.companyPin + quote + "}"
-        else if reqType = "GET_HOUSE_RULES"
-            if m.top.propertyId <> ""
-                queryFilter = "or=(property_id.eq." + m.top.propertyId + ",property_id.is.null)&order=sort_order.asc"
-            else
-                queryFilter = "order=sort_order.asc"
-            end if
-        else if reqType = "GET_RECOMMENDATIONS"
-            if m.top.propertyId <> ""
-                queryFilter = "or=(property_id.eq." + m.top.propertyId + ",property_id.is.null)&order=sort_order.asc"
-            else
-                queryFilter = "order=sort_order.asc"
-            end if
-        else if reqType = "GET_CHECKOUT_TASKS"
-            if m.top.propertyId <> ""
-                queryFilter = "or=(property_id.eq." + m.top.propertyId + ",property_id.is.null)&order=sort_order.asc"
-            else
-                queryFilter = "order=sort_order.asc"
-            end if
-        else if reqType = "GET_ACTIVE_DISCOUNT"
-            if m.top.propertyId <> ""
-                queryFilter = "is_active=eq.true&or=(property_id.eq." + m.top.propertyId + ",property_id.is.null)&order=sort_order.asc&limit=1"
-            else
-                queryFilter = "is_active=eq.true&order=sort_order.asc&limit=1"
-            end if
+        else if (reqType = "GET_HOUSE_RULES" or reqType = "GET_RECOMMENDATIONS" or reqType = "GET_CHECKOUT_TASKS" or reqType = "GET_ACTIVE_DISCOUNT") and m.top.deviceId <> "" and m.top.deviceToken <> ""
+            quote = Chr(34)
+            m.top.postBody = "{" + quote + "p_device_id" + quote + ":" + quote + m.top.deviceId + quote + "," + quote + "p_device_token" + quote + ":" + quote + m.top.deviceToken + quote + "}"
         end if
     end if
 
