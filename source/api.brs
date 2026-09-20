@@ -235,6 +235,22 @@ function MapSupabaseDiscount(row as Object) as Object
     }
 end function
 
+function MapSupabaseAlert(row as Object) as Object
+    if row = invalid then return invalid
+
+    messageVal = ""
+    if row.message <> invalid then messageVal = row.message
+    if messageVal = "" then return invalid
+
+    severityVal = "notice"
+    if row.severity <> invalid and row.severity <> "" then severityVal = row.severity
+
+    return {
+        message: messageVal,
+        severity: severityVal
+    }
+end function
+
 function BuildWifiQrUri(ssid as String, password as String) as String
     wifiPayload = "WIFI:T:WPA;S:" + ssid + ";P:" + password + ";;"
     encodedPayload = UrlEncodeString(wifiPayload)

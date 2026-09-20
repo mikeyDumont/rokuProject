@@ -49,6 +49,8 @@ sub init()
     m.hostNameLabel = m.top.findNode("hostNameLabel")
     m.hostPhoneLabel = m.top.findNode("hostPhoneLabel")
     m.emergencyLabel = m.top.findNode("emergencyLabel")
+    m.alertsCard = m.top.findNode("alertsCard")
+    m.alertsListGroup = m.top.findNode("alertsListGroup")
 
     menuContent = CreateObject("roSGNode", "ContentNode")
     m.navBaseItems = [
@@ -221,6 +223,7 @@ sub onPinGateUnlocked()
             scheduleCheckoutCleanupTimer(prop)
             schedulePreCheckinFetchTimer(prop)
             loadActiveDiscount()
+            loadActiveAlerts()
         end if
 
         m.pinGateOverlay.visible = false
@@ -351,6 +354,87 @@ sub onActiveDiscountStateChanged()
     if discount <> invalid and discount.navLabel <> invalid and discount.navLabel <> "" then perkLabel = discount.navLabel
     rebuildNavRail(discount <> invalid, perkLabel)
 end sub
+
+sub loadActiveAlerts()
+    if not IsSupabaseConfigured() then return
+    token = GetSavedDeviceToken()
+    if token = "" then return
+
+    m.activeAlertsTask = CreateObject("roSGNode", "SupabaseTask")
+    m.activeAlertsTask.requestType = "GET_ACTIVE_ALERTS"
+    m.activeAlertsTask.deviceId = GetDeviceId()
+    m.activeAlertsTask.deviceToken = token
+    m.activeAlertsTask.observeField("state", "onActiveAlertsStateChanged")
+    m.activeAlertsTask.control = "RUN"
+end sub
+
+sub onActiveAlertsStateChanged()
+    if m.activeAlertsTask = invalid or m.activeAlertsTask.state <> "stop" then return
+
+    alerts = []
+    if m.activeAlertsTask.responseSuccess and m.activeAlertsTask.responseArray <> invalid
+        for each row in m.activeAlertsTask.responseArray
+            alert = MapSupabaseAlert(row)
+            if alert <> invalid then alerts.Push(alert)
+        end for
+    end if
+
+    renderAlerts(alerts)
+end sub
+
+' Renders 0..N active alerts in the fixed-height alertsCard, shrinking the font
+' as the count grows so several short alerts still fit without overflowing.
+sub renderAlerts(alerts as Object)
+    if m.alertsCard = invalid or m.alertsListGroup = invalid then return
+
+    while m.alertsListGroup.getChildCount() > 0
+        m.alertsListGroup.removeChildIndex(0)
+    end while
+
+    if alerts = invalid or alerts.Count() = 0
+        m.alertsCard.visible = false
+        return
+    end if
+
+    alertFont = "font:MediumBoldSystemFont"
+    maxVisible = 2
+    if alerts.Count() = 2
+        alertFont = "font:SmallBoldSystemFont"
+        maxVisible = 2
+    else if alerts.Count() >= 3
+        alertFont = "font:SmallestBoldSystemFont"
+        maxVisible = 4
+    end if
+
+    visibleCount = alerts.Count()
+    if visibleCount > maxVisible then visibleCount = maxVisible
+
+    for i = 0 to visibleCount - 1
+        alert = alerts[i]
+        label = m.alertsListGroup.createChild("Label")
+        label.text = "• " + alert.message
+        label.font = alertFont
+        label.color = AlertSeverityColor(alert.severity)
+        label.width = 1344
+        label.wrap = true
+    end for
+
+    if alerts.Count() > maxVisible
+        moreLabel = m.alertsListGroup.createChild("Label")
+        moreLabel.text = "+ " + Str(alerts.Count() - maxVisible).Trim() + " more alert(s)"
+        moreLabel.font = "font:SmallestSystemFont"
+        moreLabel.color = "0x88AAAAFF"
+        moreLabel.width = 1344
+    end if
+
+    m.alertsCard.visible = true
+end sub
+
+function AlertSeverityColor(severity as String) as String
+    if severity = "critical" then return "0xF87171FF"
+    if severity = "warning" then return "0xFBBF24FF"
+    return "0xFDE68AFF"
+end function
 
 ' Only show the Returning Guest Perk tab when an active discount exists for this org/property
 sub rebuildNavRail(showPerk as Boolean, perkLabel as String)

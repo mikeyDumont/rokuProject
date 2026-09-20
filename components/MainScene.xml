@@ -24,7 +24,7 @@
       </Group>
       
       <Group id="activeScreenContainer" translation="[310, 0]">
-        <LayoutGroup id="welcomeView" layoutDirection="vert" itemSpacings="[16, 24]" visible="true">
+        <LayoutGroup id="welcomeView" layoutDirection="vert" itemSpacings="[16, 24, 16]" visible="true">
           <LayoutGroup layoutDirection="vert" itemSpacings="[6]">
             <Label id="welcomeGuestLabel" text="" font="font:LargeBoldSystemFont" color="0xFFFFFFFF" width="1400" />
             <Label id="stayDatesLabel" text="" font="font:MediumSystemFont" color="0x34D399FF" width="1400" />
@@ -71,6 +71,15 @@
                 <Label text="Point your phone camera at this QR code to join the cabin's Wi-Fi automatically — no typing required." font="font:SmallSystemFont" color="0xCCCCCCFF" width="1150" wrap="true" />
                 <Label text="Prefer to type it manually? Use the network name and password shown in the card above." font="font:SmallestSystemFont" color="0x88AAAAFF" width="1150" wrap="true" />
               </LayoutGroup>
+            </LayoutGroup>
+          </Group>
+
+          <!-- Only shown when the property/org has active alerts; alertsListGroup is populated in brs so the font can shrink to fit multiple alerts -->
+          <Group id="alertsCard" visible="false">
+            <Rectangle id="alertsCardBg" width="1400" height="160" color="0x2A1608EE" />
+            <LayoutGroup translation="[28, 16]" layoutDirection="vert" itemSpacings="[8]">
+              <Label text="⚠ IMPORTANT ALERTS" font="font:SmallestBoldSystemFont" color="0xFBBF24FF" width="1344" wrap="true" />
+              <LayoutGroup id="alertsListGroup" layoutDirection="vert" itemSpacings="[4]" />
             </LayoutGroup>
           </Group>
         </LayoutGroup>

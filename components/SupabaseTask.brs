@@ -31,6 +31,8 @@ sub executeTask()
             endpoint = "rpc/get_checkout_tasks"
         else if reqType = "GET_ACTIVE_DISCOUNT"
             endpoint = "rpc/get_active_discount"
+        else if reqType = "GET_ACTIVE_ALERTS"
+            endpoint = "rpc/get_active_alerts"
         else if reqType = "POST_FEEDBACK"
             endpoint = "guest_feedback"
         end if
@@ -52,7 +54,7 @@ sub executeTask()
         else if reqType = "VERIFY_STAFF_PIN" and m.top.deviceId <> "" and m.top.deviceToken <> "" and m.top.companyPin <> ""
             quote = Chr(34)
             m.top.postBody = "{" + quote + "p_device_id" + quote + ":" + quote + m.top.deviceId + quote + "," + quote + "p_device_token" + quote + ":" + quote + m.top.deviceToken + quote + "," + quote + "p_company_pin" + quote + ":" + quote + m.top.companyPin + quote + "}"
-        else if (reqType = "GET_HOUSE_RULES" or reqType = "GET_RECOMMENDATIONS" or reqType = "GET_CHECKOUT_TASKS" or reqType = "GET_ACTIVE_DISCOUNT") and m.top.deviceId <> "" and m.top.deviceToken <> ""
+        else if (reqType = "GET_HOUSE_RULES" or reqType = "GET_RECOMMENDATIONS" or reqType = "GET_CHECKOUT_TASKS" or reqType = "GET_ACTIVE_DISCOUNT" or reqType = "GET_ACTIVE_ALERTS") and m.top.deviceId <> "" and m.top.deviceToken <> ""
             quote = Chr(34)
             m.top.postBody = "{" + quote + "p_device_id" + quote + ":" + quote + m.top.deviceId + quote + "," + quote + "p_device_token" + quote + ":" + quote + m.top.deviceToken + quote + "}"
         end if
