@@ -3,6 +3,11 @@ sub init()
 end sub
 
 sub executeTask()
+    if m.top.requestType = "DOWNLOAD_AMBIENT_AUDIO_FILE"
+        downloadAmbientAudioFile()
+        return
+    end if
+
     if not IsSupabaseConfigured()
         m.top.errorMessage = "Supabase is not configured"
         m.top.responseSuccess = false
@@ -109,5 +114,76 @@ sub executeTask()
         transfer.AsyncCancel()
         m.top.responseSuccess = false
         m.top.errorMessage = "Request timed out waiting for response"
+    end if
+end sub
+' Signs and downloads the ambient audio track once to local storage so looping
+' playback can reuse the file instead of re-fetching it from Supabase Storage.
+' roFileSystem is a MAIN|TASK-only component, so the cache check must happen
+' here on the Task thread rather than on MainScene's render thread.
+sub downloadAmbientAudioFile()
+    localPath = "tmp:/ambient_audio_v1.mp3"
+    fs = CreateObject("roFileSystem")
+    if fs.Exists(localPath)
+        m.top.responseSuccess = true
+        m.top.localFilePath = localPath
+        return
+    end if
+
+    if not IsSupabaseConfigured()
+        m.top.errorMessage = "Supabase is not configured"
+        m.top.responseSuccess = false
+        return
+    end if
+
+    baseUrl = GetSupabaseUrl()
+    if Right(baseUrl, 1) = "/" then baseUrl = Left(baseUrl, Len(baseUrl) - 1)
+
+    port = CreateObject("roMessagePort")
+
+    signTransfer = CreateObject("roUrlTransfer")
+    signTransfer.SetMessagePort(port)
+    ApplySupabaseHeaders(signTransfer)
+    signTransfer.SetUrl(baseUrl + "/storage/v1/object/sign/channel-media/ambient/forest_ambience-v1.mp3")
+    signTransfer.AddHeader("Prefer", "return=representation")
+    sent = signTransfer.AsyncPostFromString("{" + Chr(34) + "expiresIn" + Chr(34) + ":3600}")
+    if not sent
+        m.top.responseSuccess = false
+        m.top.errorMessage = "Failed to initiate signed URL request"
+        return
+    end if
+
+    msg = wait(10000, port)
+    if type(msg) <> "roUrlEvent" or msg.GetResponseCode() < 200 or msg.GetResponseCode() > 299
+        signTransfer.AsyncCancel()
+        m.top.responseSuccess = false
+        m.top.errorMessage = "Failed to sign ambient audio URL"
+        return
+    end if
+
+    parsed = ParseJson(msg.GetString())
+    if parsed = invalid or parsed.signedURL = invalid
+        m.top.responseSuccess = false
+        m.top.errorMessage = "Storage returned an invalid signed URL"
+        return
+    end if
+
+    fileTransfer = CreateObject("roUrlTransfer")
+    fileTransfer.SetMessagePort(port)
+    fileTransfer.SetUrl(baseUrl + "/storage/v1" + parsed.signedURL)
+    sent = fileTransfer.AsyncGetToFile(localPath)
+    if not sent
+        m.top.responseSuccess = false
+        m.top.errorMessage = "Failed to start ambient audio download"
+        return
+    end if
+
+    msg = wait(20000, port)
+    if type(msg) = "roUrlEvent" and msg.GetResponseCode() >= 200 and msg.GetResponseCode() <= 299
+        m.top.responseSuccess = true
+        m.top.localFilePath = localPath
+    else
+        fileTransfer.AsyncCancel()
+        m.top.responseSuccess = false
+        m.top.errorMessage = "Failed to download ambient audio file"
     end if
 end sub

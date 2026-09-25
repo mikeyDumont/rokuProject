@@ -673,29 +673,28 @@ sub playAmbientAudio()
     if m.ambientAudio = invalid then return
     if not IsSupabaseConfigured() then return
 
-    ' A fresh short-lived signed URL is fetched before each loop start instead of
-    ' bundling the mp3 in the package (keeps the sideload package under the size limit).
-    m.ambientAudioSignTask = CreateObject("roSGNode", "SupabaseTask")
-    m.ambientAudioSignTask.requestType = "GET_SIGNED_AMBIENT_AUDIO_URL"
-    m.ambientAudioSignTask.useStorageApi = true
-    m.ambientAudioSignTask.endpoint = "object/sign/channel-media/ambient/forest_ambience-v1.mp3"
-    m.ambientAudioSignTask.postBody = "{" + Chr(34) + "expiresIn" + Chr(34) + ":3600}"
-    m.ambientAudioSignTask.observeField("state", "onAmbientAudioSignStateChanged")
-    m.ambientAudioSignTask.control = "RUN"
+    ' roFileSystem cannot be created on the render thread, so the cache check
+    ' (and the download when needed) both happen inside SupabaseTask.
+    m.ambientAudioDownloadTask = CreateObject("roSGNode", "SupabaseTask")
+    m.ambientAudioDownloadTask.requestType = "DOWNLOAD_AMBIENT_AUDIO_FILE"
+    m.ambientAudioDownloadTask.observeField("state", "onAmbientAudioDownloadStateChanged")
+    m.ambientAudioDownloadTask.control = "RUN"
 end sub
 
-sub onAmbientAudioSignStateChanged()
-    if m.ambientAudioSignTask = invalid or m.ambientAudioSignTask.state <> "stop" then return
-    if m.ambientAudioSignTask.responseSuccess and m.ambientAudioSignTask.responseJson <> invalid and m.ambientAudioSignTask.responseJson.signedURL <> invalid
-        baseUrl = GetSupabaseUrl()
-        if Right(baseUrl, 1) = "/" then baseUrl = Left(baseUrl, Len(baseUrl) - 1)
-
-        ambientContent = CreateObject("roSGNode", "ContentNode")
-        ambientContent.url = baseUrl + "/storage/v1" + m.ambientAudioSignTask.responseJson.signedURL
-        ambientContent.streamFormat = "mp3"
-        m.ambientAudio.content = ambientContent
-        m.ambientAudio.control = "play"
+sub onAmbientAudioDownloadStateChanged()
+    if m.ambientAudioDownloadTask = invalid or m.ambientAudioDownloadTask.state <> "stop" then return
+    if m.ambientAudioDownloadTask.responseSuccess and m.ambientAudioDownloadTask.localFilePath <> ""
+        startLocalAmbientAudio(m.ambientAudioDownloadTask.localFilePath)
     end if
+end sub
+
+sub startLocalAmbientAudio(localPath as String)
+    ambientContent = CreateObject("roSGNode", "ContentNode")
+    ambientContent.url = localPath
+    ambientContent.streamFormat = "mp3"
+    m.ambientAudio.content = ambientContent
+    m.ambientAudio.loop = true
+    m.ambientAudio.control = "play"
 end sub
 
 function buildAmbientAudioUrl() as String
@@ -719,6 +718,8 @@ sub stopAmbientAudio()
 end sub
 
 sub onAmbientAudioStateChanged()
+    ' loop=true on the Audio node already handles restarting local playback;
+    ' this only covers the rare case where playback stops without looping.
     if m.ambientAudio <> invalid and m.ambientAudio.state = "finished"
         if m.pinGateOverlay <> invalid and not m.pinGateOverlay.visible
             playAmbientAudio()
