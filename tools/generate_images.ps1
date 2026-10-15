@@ -126,121 +126,14 @@ function Add-PineEmblem {
     $outlinePen.Dispose()
 }
 
-function Draw-Tracked {
-    param($g, [string]$text, $font, $brush, [single]$x, [single]$y, [single]$tracking)
-
-    $curX = $x
-    foreach ($ch in $text.ToCharArray()) {
-        $g.DrawString([string]$ch, $font, $brush, $curX, $y)
-        $size = $g.MeasureString([string]$ch, $font)
-        $curX += $size.Width + $tracking
-    }
-    return $curX - $tracking
-}
-
-function Measure-Tracked {
-    param($g, [string]$text, $font, [single]$tracking)
-    $total = 0.0
-    foreach ($ch in $text.ToCharArray()) {
-        $size = $g.MeasureString([string]$ch, $font)
-        $total += $size.Width + $tracking
-    }
-    return $total - $tracking
-}
-
 function New-IconImage {
     param([string]$Path, [int]$Width, [int]$Height, [bool]$WithWordmark)
-
-    $bmp = New-Object System.Drawing.Bitmap $Width, $Height
-    $g = [System.Drawing.Graphics]::FromImage($bmp)
-    $g.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
-    $g.TextRenderingHint = [System.Drawing.Text.TextRenderingHint]::AntiAliasGridFit
-
-    Paint-Background -g $g -w $Width -h $Height -withStars ($Height -gt 150)
-    Paint-Mountains -g $g -w $Width -h $Height
-
-    $accentBrush = New-Object System.Drawing.SolidBrush $colEmeraldMid
-    $barHeight = [Math]::Max(3, [int]($Height * 0.028))
-    $g.FillRectangle($accentBrush, 0, $Height - $barHeight, $Width, $barHeight)
-    $accentBrush.Dispose()
-
-    $treeH = [int]($Height * 0.56)
-
-    if ($WithWordmark) {
-        $cx = [int]($Height * 0.42)
-        $cy = [int]($Height * 0.50)
-        Add-PineEmblem -g $g -cx $cx -cy $cy -treeH $treeH
-
-        $titleFont = New-Object System.Drawing.Font "Segoe UI", ([Math]::Max(9, [int]($Height*0.080))), ([System.Drawing.FontStyle]::Bold), ([System.Drawing.GraphicsUnit]::Pixel)
-        $subFont = New-Object System.Drawing.Font "Segoe UI", ([Math]::Max(7, [int]($Height*0.055))), ([System.Drawing.FontStyle]::Bold), ([System.Drawing.GraphicsUnit]::Pixel)
-        $whiteBrush = New-Object System.Drawing.SolidBrush $colWhite
-        $goldBrush = New-Object System.Drawing.SolidBrush $colGold
-
-        $textX = $cx + [int]($treeH * 0.48)
-        $line1Y = $Height*0.34 - $titleFont.Height/2
-        $line2Y = $Height*0.62 - $subFont.Height/2
-        Draw-Tracked -g $g -text "BROKEN BOW" -font $titleFont -brush $whiteBrush -x $textX -y $line1Y -tracking 0.5 | Out-Null
-        Draw-Tracked -g $g -text "CABINS" -font $subFont -brush $goldBrush -x $textX -y $line2Y -tracking 0.5 | Out-Null
-
-        $titleFont.Dispose(); $subFont.Dispose(); $whiteBrush.Dispose(); $goldBrush.Dispose()
-    } else {
-        # smallest icon variant: emblem only, centered, for legibility at tiny sizes
-        Add-PineEmblem -g $g -cx ([int]($Width/2)) -cy ([int]($Height*0.46)) -treeH ([int]($Height*0.66))
-    }
-
-    $g.Dispose()
-    $bmp.Save($Path, [System.Drawing.Imaging.ImageFormat]::Png)
-    $bmp.Dispose()
-    Write-Output "Created $Path ($Width x $Height)"
+    New-HSBrandImage -Path $Path -Width $Width -Height $Height -LogoScale 0.88 -Caption "HostSync"
 }
 
 function New-SplashImage {
     param([string]$Path, [int]$Width, [int]$Height)
-
-    $bmp = New-Object System.Drawing.Bitmap $Width, $Height
-    $g = [System.Drawing.Graphics]::FromImage($bmp)
-    $g.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
-    $g.TextRenderingHint = [System.Drawing.Text.TextRenderingHint]::AntiAliasGridFit
-
-    Paint-Background -g $g -w $Width -h $Height -withStars $true
-    Paint-Mountains -g $g -w $Width -h $Height
-
-    $treeH = [int]($Height * 0.30)
-    $cx = [int]($Width / 2)
-    $cy = [int]($Height * 0.40)
-    Add-PineEmblem -g $g -cx $cx -cy $cy -treeH $treeH
-
-    $titleFont = New-Object System.Drawing.Font "Segoe UI", ([int]($Height*0.075)), ([System.Drawing.FontStyle]::Bold), ([System.Drawing.GraphicsUnit]::Pixel)
-    $dividerPen = New-Object System.Drawing.Pen $colEmeraldDark, 2
-    $subFont = New-Object System.Drawing.Font "Segoe UI", ([int]($Height*0.032)), ([System.Drawing.FontStyle]::Regular), ([System.Drawing.GraphicsUnit]::Pixel)
-    $whiteBrush = New-Object System.Drawing.SolidBrush $colWhite
-    $mutedBrush = New-Object System.Drawing.SolidBrush $colMuted
-
-    $titleText = "BROKEN BOW"
-    $tracking = $Height * 0.006
-    $titleWidth = Measure-Tracked -g $g -text $titleText -font $titleFont -tracking $tracking
-    $titleY = $cy + $treeH*0.62
-    Draw-Tracked -g $g -text $titleText -font $titleFont -brush $whiteBrush -x ($cx - $titleWidth/2) -y $titleY -tracking $tracking | Out-Null
-
-    $dividerY = $titleY + $titleFont.Height + [int]($Height*0.02)
-    $dividerW = [int]($Width * 0.10)
-    $g.DrawLine($dividerPen, $cx - $dividerW/2, $dividerY, $cx + $dividerW/2, $dividerY)
-
-    $subText = "VACATION CABINS"
-    $subSize = $g.MeasureString($subText, $subFont)
-    $g.DrawString($subText, $subFont, $mutedBrush, ($cx - $subSize.Width/2), ($dividerY + [int]($Height*0.025)))
-
-    $titleFont.Dispose(); $subFont.Dispose(); $dividerPen.Dispose(); $whiteBrush.Dispose(); $mutedBrush.Dispose()
-
-    $accentBrush = New-Object System.Drawing.SolidBrush $colEmeraldMid
-    $barHeight = [Math]::Max(3, [int]($Height * 0.006))
-    $g.FillRectangle($accentBrush, 0, $Height - $barHeight, $Width, $barHeight)
-    $accentBrush.Dispose()
-
-    $g.Dispose()
-    $bmp.Save($Path, [System.Drawing.Imaging.ImageFormat]::Png)
-    $bmp.Dispose()
-    Write-Output "Created $Path ($Width x $Height)"
+    New-HSBrandImage -Path $Path -Width $Width -Height $Height -LogoScale 0.45
 }
 
 function New-AppBackgroundImage {
@@ -299,14 +192,17 @@ function New-NavPanelImage {
     Write-Output "Created $Path ($Width x $Height)"
 }
 
+. (Join-Path $PSScriptRoot "HSBrandImage.ps1")
+
 # Channel focus icons (Roku standard sizes)
-New-IconImage -Path (Join-Path $imagesDir "icon_focus_sd.png")  -Width 216  -Height 144 -WithWordmark $false
-New-IconImage -Path (Join-Path $imagesDir "icon_focus_hd.png")  -Width 336  -Height 210 -WithWordmark $true
-New-IconImage -Path (Join-Path $imagesDir "icon_focus_fhd.png") -Width 540  -Height 303 -WithWordmark $true
+New-HSBrandImage -Path (Join-Path $imagesDir "icon_focus_sd.png") -Width 246 -Height 140 -LogoScale 0.88 -Caption "HostSync"
+New-HSBrandImage -Path (Join-Path $imagesDir "icon_focus_hd.png") -Width 336 -Height 210 -LogoScale 0.88 -Caption "HostSync"
+New-HSBrandImage -Path (Join-Path $imagesDir "icon_focus_fhd.png") -Width 540 -Height 303 -LogoScale 0.88 -Caption "HostSync"
 
 # Splash screens
-New-SplashImage -Path (Join-Path $imagesDir "splash_hd.png")  -Width 1280 -Height 720
-New-SplashImage -Path (Join-Path $imagesDir "splash_fhd.png") -Width 1920 -Height 1080
+New-HSBrandImage -Path (Join-Path $imagesDir "splash_hd.png") -Width 1280 -Height 720 -LogoScale 0.45
+New-HSBrandImage -Path (Join-Path $imagesDir "splash_fhd.png") -Width 1920 -Height 1080 -LogoScale 0.45
+New-HSBrandImage -Path (Join-Path $imagesDir "logo_poster_hd.png") -Width 540 -Height 405 -LogoScale 0.84
 
 New-AppBackgroundImage -Path (Join-Path $imagesDir "app_background_fhd.png") -Width 1920 -Height 1080
 

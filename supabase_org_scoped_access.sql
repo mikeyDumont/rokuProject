@@ -13,6 +13,9 @@
 -- no rate limiting) to read full guest display data including the WiFi password.
 
 DROP FUNCTION IF EXISTS public.get_active_property_display(TEXT);
+-- The live get_recommendations return type no longer matches this definition,
+-- and CREATE OR REPLACE can't change OUT-parameter row types.
+DROP FUNCTION IF EXISTS public.get_recommendations(TEXT, TEXT);
 
 CREATE OR REPLACE FUNCTION public.get_house_rules(p_device_id TEXT, p_device_token TEXT)
 RETURNS TABLE (title TEXT, category TEXT, summary TEXT, details TEXT, fine TEXT)

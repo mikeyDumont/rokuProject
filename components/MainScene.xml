@@ -100,6 +100,11 @@
     <PinGateScreen id="pinGateOverlay" visible="false" />
     <ScreensaverView id="screensaverOverlay" visible="false" />
     <StaffMenu id="staffMenu" visible="false" />
+    <Group id="companyBrandSplash" visible="false">
+      <Rectangle width="1920" height="1080" color="0xF5F7F6FF" />
+      <Poster id="companyBrandLogo" width="1920" height="1080" loadDisplayMode="scaleToFit" />
+    </Group>
+    <HostSyncIntro id="hostSyncIntro" />
     <Audio id="ambientAudio" />
     <Timer id="inactivityTimer" repeat="false" duration="180" />
     <Timer id="checkoutCleanupTimer" repeat="false" duration="1" />
@@ -107,5 +112,6 @@
     <Timer id="staffLongPressTimer" repeat="false" duration="3" />
     <Timer id="keepAliveTimer" repeat="true" duration="1800" />
     <Timer id="pinGateFallbackTimer" repeat="false" duration="3" />
+    <Timer id="companyBrandSplashTimer" repeat="false" duration="8" />
   </children>
 </component>

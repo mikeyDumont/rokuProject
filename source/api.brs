@@ -119,6 +119,12 @@ function MapSupabasePropertyToProfile(row as Object) as Object
     emergencyVal = "Dial 911"
     if row.emergency_contact <> invalid then emergencyVal = row.emergency_contact
 
+    brandLogoUrlVal = ""
+    if row.brand_logo_url <> invalid then brandLogoUrlVal = row.brand_logo_url
+
+    brandLogoPathVal = ""
+    if row.brand_logo_path <> invalid then brandLogoPathVal = row.brand_logo_path
+
     return {
         id: idVal,
         orgId: orgIdVal,
@@ -139,7 +145,9 @@ function MapSupabasePropertyToProfile(row as Object) as Object
         maxOccupancy: maxOccVal,
         hostName: hostNameVal,
         hostPhone: hostPhoneVal,
-        emergencyContact: emergencyVal
+        emergencyContact: emergencyVal,
+        brandLogoUrl: brandLogoUrlVal,
+        brandLogoPath: brandLogoPathVal
     }
 end function
 

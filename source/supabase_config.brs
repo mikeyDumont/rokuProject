@@ -12,6 +12,16 @@ function GetSupabaseUrl() as String
     return "https://rbuyznszkwdyafiujhas.supabase.co"
 end function
 
+function BuildCompanyLogoUrl(path as String) as String
+    if path = "" then return ""
+    baseUrl = GetSupabaseUrl()
+    if Right(baseUrl, 1) = "/"
+        baseUrl = Left(baseUrl, Len(baseUrl) - 1)
+    end if
+    if Left(path, 1) = "/" then path = Mid(path, 2)
+    return baseUrl + "/storage/v1/object/public/pmc-logos/" + path
+end function
+
 ' Return the Supabase Anon / Public API Key
 function GetSupabaseAnonKey() as String
     appInfo = CreateObject("roAppInfo")

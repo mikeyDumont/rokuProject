@@ -8,7 +8,7 @@
   </interface>
 
   <children>
-    <Rectangle width="1920" height="1080" color="0x040806FA" />
+    <Rectangle width="1920" height="1080" color="0x040806FF" />
     <Group id="floatingCard" translation="[560, 419]">
       <Label id="ssTimeLabel" translation="[0, 0]" text="3:45 PM" font="font:LargeBoldSystemFont" color="0xFFFFFFFF" horizAlign="center" vertAlign="center" width="800" height="74" />
       <Label id="ssCabinLabel" translation="[0, 88]" text="" font="font:MediumSystemFont" color="0x34D399FF" horizAlign="center" vertAlign="center" width="800" height="48" />

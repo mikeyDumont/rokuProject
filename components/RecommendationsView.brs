@@ -8,7 +8,10 @@ sub init()
     m.recImagePoster = m.top.findNode("recImagePoster")
     m.recMapsQrGroup = m.top.findNode("recMapsQrGroup")
     m.recMapsQrPoster = m.top.findNode("recMapsQrPoster")
+    m.recDetailCard = m.top.findNode("recDetailCard")
 
+    m.recList.observeField("itemFocused", "onRecItemFocused")
+    m.top.observeField("visible", "onRecommendationsVisibilityChanged")
     m.top.observeField("property", "loadRecommendationsData")
     loadRecommendationsData()
 end sub
@@ -57,16 +60,37 @@ sub populateRecList()
         item.title = place.name
     end for
     m.recList.content = contentNode
-    m.recList.observeField("itemFocused", "onRecItemFocused")
-    updateDetailView(0)
+    onRecItemFocused()
 end sub
 
 sub onRecItemFocused()
-    updateDetailView(m.recList.itemFocused)
+    index = m.recList.itemFocused
+    if index < 0 then index = 0
+    updateDetailView(index)
+end sub
+
+sub clearRecommendationArtwork()
+    m.recImagePoster.visible = false
+    m.recMapsQrGroup.visible = false
+    m.recMapsQrPoster.visible = false
+    m.recImagePoster.uri = ""
+    m.recMapsQrPoster.uri = ""
+end sub
+
+sub onRecommendationsVisibilityChanged()
+    if m.top.visible
+        onRecItemFocused()
+    else
+        m.recDetailCard.visible = false
+        clearRecommendationArtwork()
+    end if
 end sub
 
 sub updateDetailView(index as Integer)
+    if not m.top.visible then return
+
     if m.places <> invalid and index >= 0 and index < m.places.Count()
+        m.recDetailCard.visible = true
         place = m.places[index]
         m.recCategoryLabel.text = UCase(place.category)
         if place.isSponsored
@@ -83,15 +107,22 @@ sub updateDetailView(index as Integer)
                 m.recImagePoster.visible = true
             else
                 m.recImagePoster.visible = false
+                m.recImagePoster.uri = ""
             end if
         end if
         if m.recMapsQrGroup <> invalid and m.recMapsQrPoster <> invalid
             if place.address <> ""
                 m.recMapsQrPoster.uri = BuildMapsQrUri(place.address)
+                m.recMapsQrPoster.visible = true
                 m.recMapsQrGroup.visible = true
             else
                 m.recMapsQrGroup.visible = false
+                m.recMapsQrPoster.visible = false
+                m.recMapsQrPoster.uri = ""
             end if
         end if
+    else
+        m.recDetailCard.visible = false
+        clearRecommendationArtwork()
     end if
 end sub

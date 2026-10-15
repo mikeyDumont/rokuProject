@@ -16,6 +16,12 @@ sub init()
     m.staffLongPressTimer = m.top.findNode("staffLongPressTimer")
     m.keepAliveTimer = m.top.findNode("keepAliveTimer")
     m.pinGateFallbackTimer = m.top.findNode("pinGateFallbackTimer")
+    m.companyBrandSplash = m.top.findNode("companyBrandSplash")
+    m.companyBrandLogo = m.top.findNode("companyBrandLogo")
+    m.companyBrandSplashTimer = m.top.findNode("companyBrandSplashTimer")
+    if m.companyBrandLogo <> invalid
+        m.companyBrandLogo.observeField("loadStatus", "onCompanyBrandLogoLoadStatusChanged")
+    end if
     if m.keepAliveTimer <> invalid
         m.keepAliveTimer.observeField("fire", "onKeepAliveTimerFire")
         m.keepAliveTimer.control = "start"
@@ -24,6 +30,15 @@ sub init()
         m.pinGateFallbackTimer.observeField("fire", "onPinGateFallbackTimerFire")
         m.pinGateFallbackTimer.control = "start"
     end if
+    if m.companyBrandSplashTimer <> invalid
+        m.companyBrandSplashTimer.observeField("fire", "onCompanyBrandSplashTimerFire")
+    end if
+    m.hostSyncIntro = m.top.findNode("hostSyncIntro")
+    m.introRevealDone = false
+    m.brandSplashPending = false
+    m.pendingBrandLogoUrl = ""
+    m.pinGatePending = false
+    m.hostSyncIntro.observeField("revealComplete", "onHostSyncIntroRevealComplete")
     
     m.topHeader = m.top.findNode("topHeader")
     m.mainContentGroup = m.top.findNode("mainContentGroup")
@@ -128,17 +143,38 @@ sub onAssignedDeviceStateChanged()
         end if
     end if
     ClearDeviceAssignment()
-    m.pinGateOverlay.showGate = true
-    m.pinGateOverlay.setFocus(true)
+    showPinGate()
 end sub
 
 sub onPinGateFallbackTimerFire()
     ' If still not unlocked after 3 seconds, show PIN gate
     ' This handles the case where no saved PIN exists
     if not m.pinGateOverlay.isUnlocked and not m.pinGateOverlay.showGate
-        m.pinGateOverlay.showGate = true
-        m.pinGateOverlay.setFocus(true)
+        showPinGate()
     end if
+end sub
+
+sub showPinGate()
+    if not m.introRevealDone
+        m.pinGatePending = true
+        return
+    end if
+    m.pinGatePending = false
+    if m.pinGateOverlay.isUnlocked then return
+    m.pinGateOverlay.showGate = true
+    m.pinGateOverlay.setFocus(true)
+    m.hostSyncIntro.dismiss = true
+end sub
+
+sub onHostSyncIntroRevealComplete()
+    if m.introRevealDone then return
+    m.introRevealDone = true
+    if m.brandSplashPending
+        startCompanyBrandSplash(m.pendingBrandLogoUrl)
+    else if m.pinGatePending
+        showPinGate()
+    end if
+    ' Otherwise the finished intro stays up as the loading screen until the property resolves.
 end sub
 
 sub onDeepLinkPinChanged()
@@ -227,20 +263,81 @@ sub onPinGateUnlocked()
         end if
 
         m.pinGateOverlay.visible = false
-        m.topHeader.visible = true
-        m.mainContentGroup.visible = true
-        m.bottomTipBar.visible = true
-        m.navRail.setFocus(true)
-        playAmbientAudio()
+        ' In-session data refreshes (checkout cleanup, staff refresh) only update labels.
+        if m.mainContentGroup.visible or m.companyBrandSplash.visible then return
 
-        resetInactivityTimer()
+        m.topHeader.visible = false
+        m.mainContentGroup.visible = false
+        m.bottomTipBar.visible = false
+        logoUrl = "pkg:/images/logo_poster_hd.png"
+        if prop <> invalid
+            if prop.brandLogoPath <> ""
+                logoUrl = BuildCompanyLogoUrl(prop.brandLogoPath)
+            else if prop.brandLogoUrl <> ""
+                logoUrl = prop.brandLogoUrl
+            end if
+        end if
+        if m.introRevealDone
+            startCompanyBrandSplash(logoUrl)
+        else
+            ' Download the company logo while the HostSync intro plays.
+            m.brandSplashPending = true
+            m.pendingBrandLogoUrl = logoUrl
+            m.companyBrandLogo.uri = logoUrl
+        end if
     else
+        m.companyBrandSplashTimer.control = "stop"
+        m.companyBrandSplash.visible = false
         m.pinGateOverlay.showGate = true
         m.topHeader.visible = false
         m.mainContentGroup.visible = false
         m.bottomTipBar.visible = false
         m.pinGateOverlay.setFocus(true)
         stopAmbientAudio()
+    end if
+end sub
+
+sub startCompanyBrandSplash(logoUrl as String)
+    m.brandSplashPending = false
+    m.pinGatePending = false
+    m.companyBrandSplash.visible = true
+    m.hostSyncIntro.dismiss = true
+    m.companyBrandSplashTimer.duration = 8
+    m.companyBrandSplashTimer.control = "stop"
+    m.companyBrandSplashTimer.control = "start"
+    if m.companyBrandLogo.uri <> logoUrl
+        m.companyBrandLogo.uri = logoUrl
+    else
+        ' Logo may already be ready or failed from preloading during the intro.
+        onCompanyBrandLogoLoadStatusChanged()
+    end if
+end sub
+
+sub onCompanyBrandSplashTimerFire()
+    m.companyBrandSplash.visible = false
+    m.topHeader.visible = true
+    m.mainContentGroup.visible = true
+    m.bottomTipBar.visible = true
+    m.navRail.setFocus(true)
+    playAmbientAudio()
+    resetInactivityTimer()
+end sub
+
+sub onCompanyBrandLogoLoadStatusChanged()
+    if not m.companyBrandSplash.visible then return
+
+    if m.companyBrandLogo.loadStatus = "ready"
+        m.companyBrandSplashTimer.duration = 3
+        m.companyBrandSplashTimer.control = "stop"
+        m.companyBrandSplashTimer.control = "start"
+    else if m.companyBrandLogo.loadStatus = "failed"
+        if m.companyBrandLogo.uri <> "pkg:/images/logo_poster_hd.png"
+            m.companyBrandLogo.uri = "pkg:/images/logo_poster_hd.png"
+        else
+            m.companyBrandSplashTimer.duration = 3
+            m.companyBrandSplashTimer.control = "stop"
+            m.companyBrandSplashTimer.control = "start"
+        end if
     end if
 end sub
 
@@ -456,7 +553,7 @@ sub rebuildNavRail(showPerk as Boolean, perkLabel as String)
 end sub
 
 sub onInactivityTimerFire()
-    if not m.pinGateOverlay.visible and not m.screensaverOverlay.visible
+    if not m.pinGateOverlay.visible and not m.screensaverOverlay.visible and not m.companyBrandSplash.visible
         m.screensaverOverlay.visible = true
         m.screensaverOverlay.setFocus(true)
     end if
@@ -585,6 +682,8 @@ function onKeyEvent(key as String, press as Boolean) as Boolean
     handled = false
     if press
         resetInactivityTimer()
+
+        if m.companyBrandSplash.visible or m.hostSyncIntro.visible then return true
 
         if m.screensaverOverlay.visible
             m.screensaverOverlay.visible = false

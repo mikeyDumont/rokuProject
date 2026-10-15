@@ -21,7 +21,19 @@ This is a complete, standalone Roku channel written in native BrightScript and R
 2. In Supabase Dashboard, create or copy the project `anon`/publishable key. Do not use a `service_role` key in the Roku package.
 3. Set `supabase_anon_key` in `manifest` to that publishable key before packaging the channel.
 
+For PMC splash branding, run [supabase_company_branding.sql](supabase_company_branding.sql) after [supabase_host_info_join.sql](supabase_host_info_join.sql), then run [supabase_company_logo_storage.sql](supabase_company_logo_storage.sql). This creates the public-read `pmc-logos` Storage bucket and adds `host_info.brand_logo_path`. In Supabase Dashboard, open Storage, upload each PMC logo as a PNG or JPEG using a path such as `<org_id>/logo.png`, then set that organization's `host_info.brand_logo_path` to the same path:
+
+```sql
+UPDATE public.host_info
+SET brand_logo_path = '<org_id>/logo.png'
+WHERE org_id = '<org_id>';
+```
+
+Keep paths to letters, numbers, hyphens, underscores, periods, and slashes. The Roku app builds the Storage URI from the configured Supabase project URL; `brand_logo_url` remains as a compatibility fallback. The bucket is public-read because the Roku image node cannot attach Supabase authorization headers; only authorized Supabase users can upload through the dashboard. The Roku platform's pre-launch splash is static. On every channel launch the app then plays a short HostSync intro (`components/HostSyncIntro.xml`): it starts on the same image as the static splash, glides the HS logo up with a subtle overshoot, then reveals the "HostSync" name beneath it while the logo settles through diminishing rebounds. The logo comes to rest as the name reveal finishes. The assigned property and PMC logo load in the background during the intro, after which the app displays the matching PMC logo briefly before opening the guest interface. Missing or failed logos use the generic HS app icon.
+
 Global house rules, recommendations, and checkout tasks use `property_id = NULL`. Use a matching `properties.id` in `property_id` for unit-specific content.
+
+Recommendation photos and directions QR codes load only while Local Recommendations is visible. Leaving the page hides its business card and clears the image requests; returning restores the currently selected business.
 
 Create reservations with UTC timestamps. A normal property load shows guest data only when `check_in_at <= now() < check_out_at`; during checkout-to-check-in turnover, the welcome screen omits guest identity and dates. A staff-authorized Refresh action may preload the next non-cancelled arrival scheduled later that same Central Time day.
 
@@ -77,7 +89,7 @@ Set a new `build_version` in `manifest` for every uploaded build. Create a clean
 .\tools\build_release.ps1
 ```
 
-The script writes `release/BrokenBowVacationCabins-build<build_version>.zip`, verifies the required package entries, and rejects a manifest containing an OpenWeather credential. Sideload this freshly generated ZIP for device acceptance testing and use the same artifact for Roku submission.
+The script writes `release/CabinConciergeTV-build<build_version>.zip`, verifies the required package entries, and rejects a manifest containing an OpenWeather credential. Sideload this freshly generated ZIP for device acceptance testing and use the same artifact for Roku submission.
 
 ## How to Sideload:
 1. Enable Developer Mode on your Roku TV remote:

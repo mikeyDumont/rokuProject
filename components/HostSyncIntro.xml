@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="HostSyncIntro" extends="Group" xsi:noNamespaceSchemaLocation="http://sdkdocs.roku.com/schema/RokuSceneGraph.xsd">
+  <script type="text/brightscript" uri="pkg:/components/HostSyncIntro.brs" />
+
+  <interface>
+    <field id="revealComplete" type="boolean" value="false" alwaysNotify="true" />
+    <field id="dismiss" type="boolean" value="false" onChange="onDismissChanged" />
+  </interface>
+
+  <children>
+    <!-- First frame matches the manifest splash exactly so the hand-off from Roku's static splash is seamless. -->
+    <Group id="introRoot">
+      <Rectangle width="1920" height="1080" color="0xF5F7F6FF" />
+      <Poster id="introLogo" uri="pkg:/images/splash_fhd.png" width="1920" height="1080" />
+      <!-- Hide the entire reveal layer until the logo has cleared the wipe area. -->
+      <Group id="introReveal" opacity="0">
+        <Group id="introName" translation="[0, 754]" opacity="0">
+          <Label text="HostSync" width="1920" height="120" horizAlign="center" vertAlign="center" color="0x1D2125FF">
+            <Font role="font" uri="font:BoldSystemFontFile" size="96" />
+          </Label>
+        </Group>
+        <!-- Background-colored cover slides right to wipe the name in from left to right. -->
+        <Rectangle id="introWipe" translation="[600, 712]" width="1320" height="180" color="0xF5F7F6FF" />
+      </Group>
+      <Rectangle id="introAccent" translation="[880, 876]" width="160" height="4" color="0x8A9199FF" scale="[0, 1]" scaleRotateCenter="[80, 2]" />
+    </Group>
+
+    <ParallelAnimation id="revealAnimation">
+      <!-- Overshoot by 14px, then settle with smaller rebounds as the name finishes revealing. -->
+      <SequentialAnimation delay="0.4">
+        <Animation duration="0.8" easeFunction="outCubic">
+          <Vector2DFieldInterpolator key="[0.0, 1.0]" keyValue="[[0, 0], [0, -104]]" fieldToInterp="introLogo.translation" />
+        </Animation>
+        <Animation duration="0.32" easeFunction="inOutQuad">
+          <Vector2DFieldInterpolator key="[0.0, 1.0]" keyValue="[[0, -104], [0, -84]]" fieldToInterp="introLogo.translation" />
+        </Animation>
+        <Animation duration="0.28" easeFunction="inOutQuad">
+          <Vector2DFieldInterpolator key="[0.0, 1.0]" keyValue="[[0, -84], [0, -92.5]]" fieldToInterp="introLogo.translation" />
+        </Animation>
+        <Animation duration="0.27" easeFunction="inOutQuad">
+          <Vector2DFieldInterpolator key="[0.0, 1.0]" keyValue="[[0, -92.5], [0, -89]]" fieldToInterp="introLogo.translation" />
+        </Animation>
+        <Animation duration="0.28" easeFunction="inOutQuad">
+          <Vector2DFieldInterpolator key="[0.0, 1.0]" keyValue="[[0, -89], [0, -90]]" fieldToInterp="introLogo.translation" />
+        </Animation>
+      </SequentialAnimation>
+      <Animation duration="0.01" delay="1.3">
+        <FloatFieldInterpolator key="[0.0, 1.0]" keyValue="[0.0, 1.0]" fieldToInterp="introReveal.opacity" />
+      </Animation>
+      <Animation duration="1.0" delay="1.35" easeFunction="inOutCubic">
+        <Vector2DFieldInterpolator key="[0.0, 1.0]" keyValue="[[600, 712], [1320, 712]]" fieldToInterp="introWipe.translation" />
+      </Animation>
+      <Animation duration="1.0" delay="1.35" easeFunction="outCubic">
+        <FloatFieldInterpolator key="[0.0, 1.0]" keyValue="[0.0, 1.0]" fieldToInterp="introName.opacity" />
+        <Vector2DFieldInterpolator key="[0.0, 1.0]" keyValue="[[0, 754], [0, 730]]" fieldToInterp="introName.translation" />
+      </Animation>
+      <Animation duration="0.6" delay="2.05" easeFunction="outCubic">
+        <Vector2DFieldInterpolator key="[0.0, 1.0]" keyValue="[[0, 1], [1, 1]]" fieldToInterp="introAccent.scale" />
+      </Animation>
+      <!-- Hold the finished lockup on screen briefly before handing off. -->
+      <Animation duration="1.1" delay="2.6" />
+    </ParallelAnimation>
+
+    <Animation id="fadeOutAnimation" duration="0.5" easeFunction="inCubic">
+      <FloatFieldInterpolator key="[0.0, 1.0]" keyValue="[1.0, 0.0]" fieldToInterp="introRoot.opacity" />
+    </Animation>
+  </children>
+</component>
