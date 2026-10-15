@@ -1,14 +1,14 @@
-# Privacy Policy for Broken Bow Vacation Cabins (Cabin Concierge TV)
+# Privacy Policy for HostSync TV
 
-**Last Updated:** September 6, 2026
+**Last Updated:** October 15, 2026
 
-This Privacy Policy describes how the **Broken Bow Vacation Cabins** Roku Channel ("Cabin Concierge TV", "the Channel", "we", "us", or "our") processes, displays, and protects information when used on Roku devices installed at our rental properties.
+This Privacy Policy describes how **HostSync TV** ("the Channel"), operated by **HostSync** ("we", "us", or "our"), processes, displays, and protects information when used on Roku devices installed at rental properties managed by participating property management companies. HostSync TV is the guest-facing Roku companion to [HostSync.app](https://hostsync.app).
 
 ---
 
 ## 1. Overview & Purpose
 
-The Channel is a native Roku application designed to serve as an in-cabin digital concierge for guests staying at Broken Bow Vacation Cabins. It provides property details, local area recommendations, weather forecasts, house rules, checkout procedures, and personalized welcome screens.
+The Channel is a native Roku application designed to serve as a digital concierge for guests staying at participating rental properties. It provides property details, local area recommendations, weather forecasts, house rules, checkout procedures, and personalized welcome screens. Property management companies supply property-specific content and may display their own branding.
 
 ---
 
@@ -77,8 +77,7 @@ We may update this Privacy Policy from time to time to reflect updates to the Ch
 
 ## 8. Contact Us
 
-If you have any questions or concerns regarding this Privacy Policy or data handling in the Broken Bow Vacation Cabins Roku Channel, please contact property management:
+If you have any questions or concerns regarding this Privacy Policy or data handling in HostSync TV, please contact HostSync. For questions about your reservation or property, contact your property management company:
 
-- **Email:** support@hostsync.com
-- **Website:** https://brokenbowvacationcabins.com
-
+- **Email:** support@hostsync.app
+- **Website:** https://hostsync.app

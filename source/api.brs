@@ -1,5 +1,5 @@
 ' *******************************************************************
-' ** Cabin Concierge TV - BrightScript Complete API & Data Store
+' ** HostSync TV - BrightScript Complete API & Data Store
 ' *******************************************************************
 
 function GetSavedPropertyPin() as String

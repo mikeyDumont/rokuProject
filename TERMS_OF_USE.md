@@ -1,14 +1,14 @@
-# Terms of Use for Broken Bow Vacation Cabins (Cabin Concierge TV)
+# Terms of Use for HostSync TV
 
-**Last Updated:** September 6, 2026
+**Last Updated:** October 15, 2026
 
-Welcome to the **Broken Bow Vacation Cabins** Roku Channel ("Cabin Concierge TV", "the Channel", "we", "us", or "our"). These Terms of Use ("Terms") govern your access to and use of the Channel on Roku devices located within our vacation rental properties.
+Welcome to **HostSync TV** ("the Channel"), operated by **HostSync** ("we", "us", or "our") and the guest-facing Roku companion to [HostSync.app](https://hostsync.app). These Terms of Use ("Terms") govern your access to and use of the Channel on Roku devices located within rental properties managed by participating property management companies.
 
 ---
 
 ## 1. Acceptance of Terms
 
-By using or interacting with the Channel on a Roku device at Broken Bow Vacation Cabins, you agree to comply with and be bound by these Terms. If you do not agree to these Terms, please refrain from using the Channel.
+By using or interacting with HostSync TV on a Roku device at a participating rental property, you agree to comply with and be bound by these Terms. If you do not agree to these Terms, please refrain from using the Channel.
 
 ---
 
@@ -40,13 +40,13 @@ The Channel integrates with external service providers (including Supabase for p
 
 ## 5. Intellectual Property Rights
 
-All software code, visual designs, graphics, branding, text, and curated recommendations within the Channel are the exclusive property of Broken Bow Vacation Cabins or its content licensors. You are granted a limited, non-exclusive, non-transferable license to view and interact with the Channel during your stay.
+Software code, visual designs, graphics, branding, text, and curated recommendations within the Channel belong to HostSync, participating property management companies, or their respective licensors. HostSync TV branding identifies the platform; property management company logos and property-specific content remain the property of their respective owners. You are granted a limited, non-exclusive, non-transferable license to view and interact with the Channel during your stay.
 
 ---
 
 ## 6. Disclaimer of Warranties & Limitation of Liability
 
-THE CHANNEL IS PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED. TO THE FULLEST EXTENT PERMITTED BY LAW, BROKEN BOW VACATION CABINS DISCLAIMS ALL WARRANTIES, INCLUDING MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+THE CHANNEL IS PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED. TO THE FULLEST EXTENT PERMITTED BY LAW, HOSTSYNC DISCLAIMS ALL WARRANTIES, INCLUDING MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 WE SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING FROM YOUR USE OF OR INABILITY TO USE THE CHANNEL OR ANY RELIANCE UPON INFORMATION DISPLAYED THEREIN.
 
@@ -60,8 +60,7 @@ We reserve the right to update or modify these Terms at any time. Updated Terms 
 
 ## 8. Contact Information
 
-If you have questions regarding these Terms of Use, please contact property management:
+If you have questions regarding these Terms of Use, please contact HostSync. For questions about your reservation or property, contact your property management company:
 
-- **Email:** support@brokenbowvacationcabins.com
-- **Website:** https://brokenbowvacationcabins.com
-
+- **Email:** support@hostsync.app
+- **Website:** https://hostsync.app

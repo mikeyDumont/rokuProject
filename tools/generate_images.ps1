@@ -128,7 +128,7 @@ function Add-PineEmblem {
 
 function New-IconImage {
     param([string]$Path, [int]$Width, [int]$Height, [bool]$WithWordmark)
-    New-HSBrandImage -Path $Path -Width $Width -Height $Height -LogoScale 0.88 -Caption "HostSync"
+    New-HSBrandImage -Path $Path -Width $Width -Height $Height -LogoScale 0.88 -Caption "HostSync TV"
 }
 
 function New-SplashImage {
@@ -195,9 +195,9 @@ function New-NavPanelImage {
 . (Join-Path $PSScriptRoot "HSBrandImage.ps1")
 
 # Channel focus icons (Roku standard sizes)
-New-HSBrandImage -Path (Join-Path $imagesDir "icon_focus_sd.png") -Width 246 -Height 140 -LogoScale 0.88 -Caption "HostSync"
-New-HSBrandImage -Path (Join-Path $imagesDir "icon_focus_hd.png") -Width 336 -Height 210 -LogoScale 0.88 -Caption "HostSync"
-New-HSBrandImage -Path (Join-Path $imagesDir "icon_focus_fhd.png") -Width 540 -Height 303 -LogoScale 0.88 -Caption "HostSync"
+New-HSBrandImage -Path (Join-Path $imagesDir "icon_focus_sd.png") -Width 246 -Height 140 -LogoScale 0.88 -Caption "HostSync TV"
+New-HSBrandImage -Path (Join-Path $imagesDir "icon_focus_hd.png") -Width 336 -Height 210 -LogoScale 0.88 -Caption "HostSync TV"
+New-HSBrandImage -Path (Join-Path $imagesDir "icon_focus_fhd.png") -Width 540 -Height 303 -LogoScale 0.88 -Caption "HostSync TV"
 
 # Splash screens
 New-HSBrandImage -Path (Join-Path $imagesDir "splash_hd.png") -Width 1280 -Height 720 -LogoScale 0.45

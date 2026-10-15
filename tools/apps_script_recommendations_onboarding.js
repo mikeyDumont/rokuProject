@@ -1,4 +1,4 @@
-// Cabin Concierge TV - Recommendations onboarding form handler
+// HostSync TV - Recommendations onboarding form handler
 // Google Apps Script trigger: onFormSubmit (installable trigger on the Sheet
 // that collects Google Form responses for new local-business recommendations).
 //

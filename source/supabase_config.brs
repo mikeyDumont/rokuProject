@@ -1,5 +1,5 @@
 ' *******************************************************************
-' ** Cabin Concierge TV - Supabase Configuration & Helper Module
+' ** HostSync TV - Supabase Configuration & Helper Module
 ' *******************************************************************
 
 ' Return the Supabase Project URL

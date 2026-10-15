@@ -15,12 +15,12 @@
       <!-- Hide the entire reveal layer until the logo has cleared the wipe area. -->
       <Group id="introReveal" opacity="0">
         <Group id="introName" translation="[0, 754]" opacity="0">
-          <Label text="HostSync" width="1920" height="120" horizAlign="center" vertAlign="center" color="0x1D2125FF">
+          <Label text="HostSync TV" width="1920" height="120" horizAlign="center" vertAlign="center" color="0x1D2125FF">
             <Font role="font" uri="font:BoldSystemFontFile" size="96" />
           </Label>
         </Group>
         <!-- Background-colored cover slides right to wipe the name in from left to right. -->
-        <Rectangle id="introWipe" translation="[600, 712]" width="1320" height="180" color="0xF5F7F6FF" />
+        <Rectangle id="introWipe" translation="[480, 712]" width="1440" height="180" color="0xF5F7F6FF" />
       </Group>
       <Rectangle id="introAccent" translation="[880, 876]" width="160" height="4" color="0x8A9199FF" scale="[0, 1]" scaleRotateCenter="[80, 2]" />
     </Group>
@@ -48,7 +48,7 @@
         <FloatFieldInterpolator key="[0.0, 1.0]" keyValue="[0.0, 1.0]" fieldToInterp="introReveal.opacity" />
       </Animation>
       <Animation duration="1.0" delay="1.35" easeFunction="inOutCubic">
-        <Vector2DFieldInterpolator key="[0.0, 1.0]" keyValue="[[600, 712], [1320, 712]]" fieldToInterp="introWipe.translation" />
+        <Vector2DFieldInterpolator key="[0.0, 1.0]" keyValue="[[480, 712], [1440, 712]]" fieldToInterp="introWipe.translation" />
       </Animation>
       <Animation duration="1.0" delay="1.35" easeFunction="outCubic">
         <FloatFieldInterpolator key="[0.0, 1.0]" keyValue="[0.0, 1.0]" fieldToInterp="introName.opacity" />

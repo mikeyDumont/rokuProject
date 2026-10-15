@@ -1,5 +1,5 @@
 /*
- * Cabin Concierge Roku reservation sync for Google Apps Script.
+ * HostSync TV Roku reservation sync for Google Apps Script.
  *
  * Required Script Properties:
  * TRACK_OPTIONS_JSON       JSON-serialized UrlFetchApp options for Track PMS.

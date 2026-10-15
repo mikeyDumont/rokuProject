@@ -1,6 +1,6 @@
-# Cabin Concierge TV - 100% Native Roku SceneGraph Channel Package
+# HostSync TV - 100% Native Roku SceneGraph Channel Package
 
-This is a complete, standalone Roku channel written in native BrightScript and Roku SceneGraph (RSG).
+HostSync TV is the guest-facing Roku companion to [HostSync.app](https://hostsync.app), the property management and field-worker platform. This is a complete, standalone Roku channel written in native BrightScript and Roku SceneGraph (RSG).
 
 ## Structure:
 - `manifest`: Channel metadata, icon paths, and 1080p FHD resolution declarations.
@@ -29,7 +29,7 @@ SET brand_logo_path = '<org_id>/logo.png'
 WHERE org_id = '<org_id>';
 ```
 
-Keep paths to letters, numbers, hyphens, underscores, periods, and slashes. The Roku app builds the Storage URI from the configured Supabase project URL; `brand_logo_url` remains as a compatibility fallback. The bucket is public-read because the Roku image node cannot attach Supabase authorization headers; only authorized Supabase users can upload through the dashboard. The Roku platform's pre-launch splash is static. On every channel launch the app then plays a short HostSync intro (`components/HostSyncIntro.xml`): it starts on the same image as the static splash, glides the HS logo up with a subtle overshoot, then reveals the "HostSync" name beneath it while the logo settles through diminishing rebounds. The logo comes to rest as the name reveal finishes. The assigned property and PMC logo load in the background during the intro, after which the app displays the matching PMC logo briefly before opening the guest interface. Missing or failed logos use the generic HS app icon.
+Keep paths to letters, numbers, hyphens, underscores, periods, and slashes. The Roku app builds the Storage URI from the configured Supabase project URL; `brand_logo_url` remains as a compatibility fallback. The bucket is public-read because the Roku image node cannot attach Supabase authorization headers; only authorized Supabase users can upload through the dashboard. The Roku platform's pre-launch splash is static. On every channel launch the app then plays a short HostSync TV intro (`components/HostSyncIntro.xml`): it starts on the same image as the static splash, glides the HS logo up with a subtle overshoot, then reveals the "HostSync TV" name beneath it while the logo settles through diminishing rebounds. The logo comes to rest as the name reveal finishes. The assigned property and PMC logo load in the background during the intro, after which the app displays the matching PMC logo briefly before opening the guest interface. Missing or failed logos use the generic HS app icon.
 
 Global house rules, recommendations, and checkout tasks use `property_id = NULL`. Use a matching `properties.id` in `property_id` for unit-specific content.
 
@@ -89,7 +89,13 @@ Set a new `build_version` in `manifest` for every uploaded build. Create a clean
 .\tools\build_release.ps1
 ```
 
-The script writes `release/CabinConciergeTV-build<build_version>.zip`, verifies the required package entries, and rejects a manifest containing an OpenWeather credential. Sideload this freshly generated ZIP for device acceptance testing and use the same artifact for Roku submission.
+The script writes `release/HostSyncTV-build<build_version>.zip`, verifies the required package entries, and rejects a manifest containing an OpenWeather credential. Sideload this freshly generated ZIP for device acceptance testing and use the same artifact for Roku submission.
+
+The FHD, HD, and SD app tiles include the "HostSync TV" wordmark. Regenerate them on Windows with `tools/resize_custom_icons.ps1`, or use `tools/generate_images.ps1` to regenerate all artwork. Both use the shared `tools/HSBrandImage.ps1` helper and bundled Inter font. The static launch splash and generic company-logo fallback intentionally remain logo-only so the animated wordmark is not duplicated.
+
+When publishing, set the Roku Dashboard app name to **HostSync TV**, update its listing artwork and screenshots, and point its policy links to the published HostSync TV pages in `docs/`. These store settings are not changed by uploading the package. Public support is **support@hostsync.app**, and the product website is **https://hostsync.app**.
+
+The rebrand keeps the existing `CabinConciergeAuth` Roku registry section so installed TVs retain their device assignments. Do not rename that storage section solely to match the product name.
 
 ## How to Sideload:
 1. Enable Developer Mode on your Roku TV remote:

@@ -37,7 +37,7 @@ if (-not $buildVersionLine) {
 
 $buildVersion = ($buildVersionLine -split "=", 2)[1].Trim()
 $outputPath = Join-Path $projectRoot $OutputDirectory
-$packagePath = Join-Path $outputPath ("CabinConciergeTV-build{0}.zip" -f $buildVersion)
+$packagePath = Join-Path $outputPath ("HostSyncTV-build{0}.zip" -f $buildVersion)
 
 New-Item -ItemType Directory -Path $outputPath -Force | Out-Null
 Remove-Item $packagePath -Force -ErrorAction SilentlyContinue
@@ -65,4 +65,3 @@ try {
 }
 
 Write-Output "Release package successfully created with POSIX forward slashes: $packagePath"
-

@@ -1,9 +1,9 @@
 ' *******************************************************************
-' ** Cabin Concierge TV - Native Roku BrightScript Entry Point
+' ** HostSync TV - Native Roku BrightScript Entry Point
 ' *******************************************************************
 
 sub Main(args as Dynamic)
-    print "Starting Cabin Concierge Roku Native Channel..."
+    print "Starting HostSync TV Roku Native Channel..."
     
     screen = CreateObject("roSGScreen")
     m.port = CreateObject("roMessagePort")
